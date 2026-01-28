@@ -1,11 +1,12 @@
-<script setup lang="ts"></script>
-
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
+  <RouterView v-slot="{ Component }">
+    <Transition name="suave" mode="out-in">
+      <component :is="Component" />
+    </Transition>
+  </RouterView>
 </template>
 
-<style scoped></style>
+<style>
+.suave-enter-active, .suave-leave-active { transition: opacity .18s ease, transform .18s ease; }
+.suave-enter-from, .suave-leave-to { opacity: 0; transform: translateY(6px); }
+</style>

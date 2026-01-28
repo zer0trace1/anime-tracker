@@ -1,0 +1,25 @@
+:root{
+  --fondo: #f6f1e7;
+  --fondo-2: #eaf3ed;
+  --texto: #1f2a24;
+  --suave: rgba(31, 42, 36, 0.10);
+  --suave-2: rgba(31, 42, 36, 0.16);
+  --tarjeta: rgba(255,255,255,0.55);
+  --tarjeta-borde: rgba(31,42,36,0.10);
+  --sombra: 0 12px 30px rgba(0,0,0,0.08);
+  --radio: 22px;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  color: var(--texto);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
+  background: radial-gradient(1200px 700px at 20% 10%, var(--fondo-2), transparent 60%),
+              radial-gradient(900px 600px at 80% 30%, #e9f2ff, transparent 60%),
+              var(--fondo);
+}
+
+a { color: inherit; text-decoration: none; }
+button, input { font: inherit; }
