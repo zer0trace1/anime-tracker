@@ -8,5 +8,5 @@
 
 <style>
 .suave-enter-active, .suave-leave-active { transition: opacity .18s ease, transform .18s ease; }
-.suave-enter-from, .suave-leave-to { opacity: 0; transform: translateY(6px); }
+.suave-enter-from, .suave-leave-to { opacity: 0; transform: scale(0.99); }
 </style>

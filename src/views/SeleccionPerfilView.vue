@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { usePerfilesStore } from '@/stores/perfiles'
 import { resolverAvatar } from '@/assets/avatares'
 import { leerImagenCuadradaComoDataUrl } from '@/services/imagenes'
+import totoroGif from '@/assets/decor/totoro-gif.gif'
 
 const router = useRouter()
 const perfiles = usePerfilesStore()
@@ -88,8 +89,8 @@ function quitarFoto(id: string, ev: MouseEvent) {
 
         <div class="acciones">
           <span class="pista">Pulsa para entrar</span>
-          <span class="separador">·</span>
-          <span class="link" role="button" @click="cambiarAvatar(p.id, $event)">Cambiar avatar</span>
+          <!--<span class="separador">·</span>-->
+          <!--<span class="link" role="button" @click="cambiarAvatar(p.id, $event)">Cambiar avatar</span>-->
           <span class="separador">·</span>
           <span class="link" role="button" @click="elegirFoto(p.id, $event)">Elegir foto</span>
           <span v-if="p.avatarPersonalizado" class="separador">·</span>
@@ -106,9 +107,9 @@ function quitarFoto(id: string, ev: MouseEvent) {
       style="display:none"
       @change="onArchivoCambiado"
     />
-
+    <img class="decor totoro" :src="totoroGif" alt="" aria-hidden="true" />
     <div class="pie">
-      <span class="nota">Cozy · Sencilla · Minimalista</span>
+      <span class="nota">Realiza el seguimiento de tu contenido favorito ☺️</span>
     </div>
   </div>
 </template>
@@ -121,11 +122,54 @@ function quitarFoto(id: string, ev: MouseEvent) {
   justify-content:center;
   align-items:center;
   padding: 40px 18px;
+  position: relative;
+  overflow: hidden;
 }
 
 .cabecera{
   text-align:center;
   margin-bottom: 26px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Todo tu contenido por encima */
+.grid, .pie{
+  position: relative;
+  z-index: 2;
+}
+
+/* Decoraciones por debajo y sin bloquear clicks */
+.decor{
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.92;
+  filter: drop-shadow(0 18px 28px rgba(0,0,0,0.10));
+}
+
+/* Totoro caminando por abajo */
+.totoro{
+  width: 220px;
+  bottom: 14px;
+  left: -240px;
+  animation: totoroCamina 18s linear infinite;
+  animation-delay: -3s;
+}
+
+@keyframes totoroCamina{
+  from   { transform: translateX(calc(100vw + 520px)); }
+  to { transform: translateX(0); }
+}
+
+/* En móvil, mejor más discreto */
+@media (max-width: 520px){
+  .totoro{ width: 170px; bottom: 8px; }
+}
+
+/* Respeta usuarios con reducción de movimiento */
+@media (prefers-reduced-motion: reduce){
+  .totoro{ animation: none !important; }
 }
 
 .marca{

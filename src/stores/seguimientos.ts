@@ -82,6 +82,30 @@ export const useSeguimientosStore = defineStore('seguimientos', {
 
         lista[idx] = next
     },
+
+    ajustarProgreso(perfilId: string, id: string, delta: number) {
+      this.asegurarPerfil(perfilId)
+      const lista = this.porPerfil[perfilId] ?? (this.porPerfil[perfilId] = [])
+
+      const idx = lista.findIndex(x => x.id === id)
+      if (idx === -1) return
+
+      const actual = lista[idx]
+      if (!actual) return
+      if (actual.tipo === 'pelicula') return
+
+      const total = actual.progresoTotal
+      let nuevo = (actual.progresoActual ?? 0) + delta
+
+      if (nuevo < 0) nuevo = 0
+      if (typeof total === 'number' && total > 0) nuevo = Math.min(nuevo, total)
+
+      lista[idx] = {
+        ...actual,
+        progresoActual: nuevo,
+        updatedAt: Date.now(),
+      }
+    },
   },
 })
 

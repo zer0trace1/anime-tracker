@@ -1,25 +1,68 @@
 :root{
-  --fondo: #f6f1e7;
-  --fondo-2: #eaf3ed;
+  /* Paleta pastel (inspirada en la imagen que has pasado) */
+  --crema: #FBFBFA;
+  --papel: #E5E4DD;
+  --melocoton: #ECC6AD;
+  --mantequilla: #FDE9B4;
+  --arena: #D9B265;
+
+  --salvia: #8CA697;
+  --salvia-oscura: #668468;
+  --musgo: #7E9A25;
+  --bosque: #295B31;
+
+  --teal: #0B889E;
+  --azul-profundo: #014B72;
+
+  --malva: #926582;
+  --rosa: #E98EAB;
+  --coral: #DE5856;
+
+  --cacao: #44342E;
+
+  /* Tokens de UI */
+  --fondo: var(--crema);
   --texto: #1f2a24;
+
+  --tarjeta: rgba(255,255,255,0.62);
+  --tarjeta-borde: rgba(31,42,36,0.10);
   --suave: rgba(31, 42, 36, 0.10);
   --suave-2: rgba(31, 42, 36, 0.16);
-  --tarjeta: rgba(255,255,255,0.55);
-  --tarjeta-borde: rgba(31,42,36,0.10);
   --sombra: 0 12px 30px rgba(0,0,0,0.08);
+
   --radio: 22px;
+
+  /* Botón principal */
+  --btn: rgba(31,42,36,0.92);
+  --btn-texto: #fff;
 }
 
 * { box-sizing: border-box; }
 html, body { height: 100%; }
-body {
+
+body{
   margin: 0;
   color: var(--texto);
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
-  background: radial-gradient(1200px 700px at 20% 10%, var(--fondo-2), transparent 60%),
-              radial-gradient(900px 600px at 80% 30%, #e9f2ff, transparent 60%),
-              var(--fondo);
+  /* base */
+  background: var(--fondo);
+  position: relative;
+}
+
+/* ✅ Fondo fijo, sin seams */
+body::before{
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+
+  background:
+    radial-gradient(1000px 600px at 18% 8%, rgba(140,166,151,0.35), transparent 60%),
+    radial-gradient(900px 520px at 82% 20%, rgba(11,136,158,0.18), transparent 60%),
+    radial-gradient(900px 700px at 60% 95%, rgba(233,142,171,0.20), transparent 55%),
+    linear-gradient(180deg, var(--fondo), var(--papel));
 }
 
 a { color: inherit; text-decoration: none; }
-button, input { font: inherit; }
+button, input, select, textarea { font: inherit; }

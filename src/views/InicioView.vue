@@ -12,9 +12,15 @@ const perfiles = usePerfilesStore()
 const seguimientos = useSeguimientosStore()
 
 const seccion = ref<TipoContenido>('anime')
-const modalAbierto = ref(false)
 
-const lista = computed(() => seguimientos.listaPorTipo(seccion.value))
+const modalAbierto = ref(false)
+const itemEditando = ref<Seguimiento | null>(null)
+
+const busqueda = ref('')
+const estadoFiltro = ref<EstadoSeguimiento | 'todos'>('todos')
+const orden = ref<'recientes' | 'alfabetico' | 'nota_desc' | 'progreso_desc'>('recientes')
+
+const comentariosAbiertos = ref<Record<string, boolean>>({})
 
 const nombresSeccion: Record<TipoContenido, string> = {
   anime: 'Animes',
@@ -32,20 +38,75 @@ const nombresEstado: Record<EstadoSeguimiento, string> = {
   abandonado: 'Abandonado',
 }
 
-const comentariosAbiertos = ref<Record<string, boolean>>({})
+const listaBase = computed(() => seguimientos.listaPorTipo(seccion.value))
 
-const itemEditando = ref<Seguimiento | null>(null)
+const hayFiltros = computed(() => {
+  return busqueda.value.trim().length > 0 || estadoFiltro.value !== 'todos'
+})
 
-function editar(item: Seguimiento) {
-  itemEditando.value = item
+const lista = computed(() => {
+  const q = busqueda.value.trim().toLowerCase()
+  let arr = [...listaBase.value]
+
+  if (q) {
+    arr = arr.filter(x => (x.titulo ?? '').toLowerCase().includes(q))
+  }
+
+  if (estadoFiltro.value !== 'todos') {
+    arr = arr.filter(x => x.estado === estadoFiltro.value)
+  }
+
+  switch (orden.value) {
+    case 'alfabetico':
+      arr.sort((a, b) => (a.titulo ?? '').localeCompare(b.titulo ?? '', 'es', { sensitivity: 'base' }))
+      break
+
+    case 'nota_desc':
+      arr.sort((a, b) => (b.nota ?? -1) - (a.nota ?? -1))
+      break
+
+    case 'progreso_desc': {
+      const score = (x: Seguimiento) => {
+        if (x.tipo === 'pelicula') return -1
+        if (x.progresoTotal && x.progresoTotal > 0) return x.progresoActual / x.progresoTotal
+        return x.progresoActual > 0 ? 0.001 : -1
+      }
+      arr.sort((a, b) => score(b) - score(a))
+      break
+    }
+
+    default:
+      arr.sort((a, b) => (b.updatedAt ?? 0) - (a.updatedAt ?? 0))
+  }
+
+  return arr
+})
+
+const contadorTexto = computed(() => {
+  const total = listaBase.value.length
+  const visible = lista.value.length
+  return hayFiltros.value ? `${visible}/${total}` : `${total}`
+})
+
+const stats = computed(() => {
+  const counts: Record<EstadoSeguimiento, number> = {
+    pendiente: 0,
+    en_progreso: 0,
+    terminado: 0,
+    en_pausa: 0,
+    abandonado: 0,
+  }
+  for (const item of lista.value) counts[item.estado]++
+  return counts
+})
+
+function abrirAñadir() {
+  itemEditando.value = null
   modalAbierto.value = true
 }
 
-function toggleComentario(id: string) {
-  comentariosAbiertos.value[id] = !comentariosAbiertos.value[id]
-}
-
-function abrirAñadir() {
+function editar(item: Seguimiento) {
+  itemEditando.value = item
   modalAbierto.value = true
 }
 
@@ -54,12 +115,46 @@ function cerrarModal() {
   itemEditando.value = null
 }
 
-function cambiarPerfil() {
-  router.push('/') // vuelve a la landing tipo Netflix
-}
-
 function eliminar(item: Seguimiento) {
   seguimientos.eliminar(perfiles.perfilActivoId, item.id)
+}
+
+function ajustar(item: Seguimiento, delta: number) {
+  seguimientos.ajustarProgreso(perfiles.perfilActivoId, item.id, delta)
+}
+
+function cambiarPerfil() {
+  router.push('/')
+}
+
+function toggleComentario(id: string) {
+  comentariosAbiertos.value[id] = !comentariosAbiertos.value[id]
+}
+
+function limpiarFiltros() {
+  busqueda.value = ''
+  estadoFiltro.value = 'todos'
+  orden.value = 'recientes'
+}
+
+function inicial(titulo: string) {
+  const t = (titulo ?? '').trim()
+  return t ? t[0]!.toUpperCase() : '•'
+}
+
+function estiloPortada(item: Seguimiento) {
+  if (item.imagenUrl) return undefined
+
+  const paletas: Record<TipoContenido, [string, string]> = {
+    anime: ['#B7D3C6', '#FDE9B4'],
+    serie: ['#E9F2FF', '#F6F1E7'],
+    pelicula: ['#ECC6AD', '#EAF3ED'],
+    manga: ['#E98EAB', '#F6F1E7'],
+    manhwa: ['#0B889E', '#E5E4DD'],
+  }
+
+  const [a, b] = paletas[item.tipo] ?? paletas.anime
+  return { background: `linear-gradient(135deg, ${a}, ${b})` }
 }
 </script>
 
@@ -95,14 +190,59 @@ function eliminar(item: Seguimiento) {
     <section class="bloque">
       <div class="cabBloque">
         <h2>{{ nombresSeccion[seccion] }}</h2>
-        <span class="contador">{{ lista.length }}</span>
+        <span class="contador">{{ contadorTexto }}</span>
       </div>
 
-      <div v-if="lista.length" class="grid">
+      <!-- Controles -->
+      <div class="controles">
+        <label class="campoCtrl">
+          <span class="labelCtrl">Buscar</span>
+          <input v-model="busqueda" class="inputCtrl" placeholder="Escribe un título..." />
+        </label>
+
+        <label class="campoCtrl">
+          <span class="labelCtrl">Estado</span>
+          <select v-model="estadoFiltro" class="inputCtrl">
+            <option value="todos">Todos</option>
+            <option value="pendiente">Pendiente</option>
+            <option value="en_progreso">En progreso</option>
+            <option value="terminado">Terminado</option>
+            <option value="en_pausa">En pausa</option>
+            <option value="abandonado">Abandonado</option>
+          </select>
+        </label>
+
+        <label class="campoCtrl">
+          <span class="labelCtrl">Orden</span>
+          <select v-model="orden" class="inputCtrl">
+            <option value="recientes">Más recientes</option>
+            <option value="alfabetico">A-Z</option>
+            <option value="nota_desc">Mejor nota</option>
+            <option value="progreso_desc">Más progreso</option>
+          </select>
+        </label>
+
+        <button v-if="hayFiltros" class="btnLimpiar" type="button" @click="limpiarFiltros">
+          Limpiar
+        </button>
+      </div>
+
+      <!-- Stats -->
+      <div v-if="listaBase.length" class="stats">
+        <span v-if="stats.en_progreso" class="chip estado estado--en_progreso">En progreso: {{ stats.en_progreso }}</span>
+        <span v-if="stats.pendiente" class="chip estado estado--pendiente">Pendiente: {{ stats.pendiente }}</span>
+        <span v-if="stats.terminado" class="chip estado estado--terminado">Terminado: {{ stats.terminado }}</span>
+        <span v-if="stats.en_pausa" class="chip estado estado--en_pausa">En pausa: {{ stats.en_pausa }}</span>
+        <span v-if="stats.abandonado" class="chip estado estado--abandonado">Abandonado: {{ stats.abandonado }}</span>
+      </div>
+
+      <!-- Lista -->
+      <TransitionGroup v-if="lista.length" name="cards" tag="div" class="grid">
         <article v-for="item in lista" :key="item.id" class="card">
           <div class="filaCard">
-            <div class="portada" :class="{ conImagen: !!item.imagenUrl }">
+            <div class="portada" :style="estiloPortada(item)" :class="{ conImagen: !!item.imagenUrl }">
               <img v-if="item.imagenUrl" :src="item.imagenUrl" alt="" />
+              <div v-else class="portadaDefault">{{ inicial(item.titulo) }}</div>
             </div>
 
             <div class="info">
@@ -115,8 +255,29 @@ function eliminar(item: Seguimiento) {
 
                 <span v-if="seccion !== 'pelicula' && (item.progresoTotal || item.progresoActual)">
                   · {{ item.progresoActual }} / {{ item.progresoTotal ?? '—' }}
-                </span>
 
+                  <span class="progresoCtrl">
+                    <button
+                      type="button"
+                      class="miniBtn"
+                      @click="ajustar(item, -1)"
+                      :disabled="item.progresoActual <= 0"
+                      aria-label="Restar 1"
+                    >
+                      −1
+                    </button>
+
+                    <button
+                      type="button"
+                      class="miniBtn"
+                      @click="ajustar(item, +1)"
+                      :disabled="!!item.progresoTotal && item.progresoActual >= item.progresoTotal"
+                      aria-label="Sumar 1"
+                    >
+                      +1
+                    </button>
+                  </span>
+                </span>
                 <span v-if="item.nota !== undefined"> · ⭐ {{ item.nota }}</span>
               </div>
 
@@ -144,20 +305,36 @@ function eliminar(item: Seguimiento) {
             </div>
           </div>
         </article>
-      </div>
+      </TransitionGroup>
 
+      <!-- Vacío -->
       <div v-else class="vacio">
-        <div class="vacioCaja">
+        <div v-if="listaBase.length === 0" class="vacioCaja">
           <div class="vacioTitulo">Aún no hay nada aquí.</div>
-          <div class="vacioSub">Pulsa “Añadir” para empezar tu lista de {{ nombresSeccion[seccion].toLowerCase() }}.</div>
+          <div class="vacioSub">
+            Pulsa “Añadir” para empezar tu lista de {{ nombresSeccion[seccion].toLowerCase() }}.
+          </div>
           <button class="btnPri" type="button" @click="abrirAñadir">Añadir</button>
         </div>
+
+        <div v-else class="vacioCaja">
+          <div class="vacioTitulo">No hay resultados.</div>
+          <div class="vacioSub">Prueba a cambiar la búsqueda o los filtros.</div>
+          <button class="btnPri" type="button" @click="limpiarFiltros">Quitar filtros</button>
+        </div>
+      </div>
+
+      <!-- Botón debajo (solo si ya hay items en la sección) -->
+      <div v-if="listaBase.length" class="barraAñadir">
+        <button class="btnAñadir" type="button" @click="abrirAñadir" aria-label="Añadir">
+          <span class="plus" aria-hidden="true">
+            <span class="v"></span>
+            <span class="h"></span>
+          </span>
+          <span>Añadir</span>
+        </button>
       </div>
     </section>
-
-    <button class="fab" type="button" @click="abrirAñadir" aria-label="Añadir">
-      +
-    </button>
 
     <ModalAñadir
       :abierto="modalAbierto"
@@ -173,7 +350,7 @@ function eliminar(item: Seguimiento) {
 .contenedor{
   max-width: 980px;
   margin: 0 auto;
-  padding: 22px 18px 90px;
+  padding: 22px 18px 60px;
 }
 
 .top{
@@ -267,7 +444,46 @@ function eliminar(item: Seguimiento) {
   background: rgba(255,255,255,0.55);
 }
 
+.controles{
+  display:grid;
+  grid-template-columns: 1.4fr 1fr 1fr auto;
+  gap: 10px;
+  align-items:end;
+  margin: 10px 0 12px;
+}
+
+.campoCtrl{ display:grid; gap: 6px; }
+.labelCtrl{ font-size: 12px; opacity: 0.70; }
+
+.inputCtrl{
+  border-radius: 14px;
+  border: 1px solid rgba(31,42,36,0.12);
+  background: rgba(255,255,255,0.60);
+  padding: 10px 12px;
+  outline: none;
+}
+
+.inputCtrl:focus{ border-color: rgba(31,42,36,0.22); }
+
+.btnLimpiar{
+  border-radius: 999px;
+  padding: 10px 12px;
+  border: 1px solid rgba(31,42,36,0.12);
+  background: rgba(255,255,255,0.55);
+  cursor: pointer;
+}
+
+.stats{
+  display:flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.chip{ font-size: 12.5px; }
+
 .grid{
+  position: relative;
   display:grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
@@ -293,16 +509,27 @@ function eliminar(item: Seguimiento) {
   width: 56px;
   height: 56px;
   border-radius: 16px;
-  background: rgba(31,42,36,0.08);
   border: 1px solid rgba(31,42,36,0.08);
   overflow:hidden;
   flex: 0 0 auto;
+  display:grid;
+  place-items:center;
 }
 
 .portada img{
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.portadaDefault{
+  width: 100%;
+  height: 100%;
+  display:grid;
+  place-items:center;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  opacity: 0.82;
 }
 
 .info{ flex: 1; min-width: 0; }
@@ -331,27 +558,23 @@ function eliminar(item: Seguimiento) {
   gap: 6px;
 }
 
-/* Colores suaves (cozy) */
+/* Colores suaves por estado */
 .estado--pendiente{
   background: rgba(120, 120, 120, 0.10);
   border-color: rgba(120, 120, 120, 0.18);
 }
-
 .estado--en_progreso{
   background: rgba(70, 130, 180, 0.12);
   border-color: rgba(70, 130, 180, 0.22);
 }
-
 .estado--terminado{
   background: rgba(60, 160, 90, 0.14);
   border-color: rgba(60, 160, 90, 0.24);
 }
-
 .estado--en_pausa{
   background: rgba(230, 170, 60, 0.16);
   border-color: rgba(230, 170, 60, 0.28);
 }
-
 .estado--abandonado{
   background: rgba(200, 70, 70, 0.14);
   border-color: rgba(200, 70, 70, 0.24);
@@ -362,7 +585,7 @@ function eliminar(item: Seguimiento) {
   font-size: 12.5px;
   opacity: 0.78;
   display: -webkit-box;
-  line-clamp: 2;            /* <- estándar (para el warning) */
+  line-clamp: 2;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
@@ -401,7 +624,6 @@ function eliminar(item: Seguimiento) {
   font-size: 14px;
   padding: 4px 6px;
 }
-
 .editar:hover, .borrar:hover{ opacity: 0.85; }
 
 .vacio{
@@ -426,23 +648,114 @@ function eliminar(item: Seguimiento) {
   cursor: pointer;
 }
 
-.fab{
-  position: fixed;
-  right: 18px;
-  bottom: 18px;
-  width: 56px;
-  height: 56px;
+.barraAñadir{
+  margin-top: 14px;
+  display:flex;
+  justify-content:center;
+}
+
+.btnAñadir{
+  display:flex;
+  align-items:center;
+  gap: 10px;
   border-radius: 999px;
+  padding: 12px 16px;
   border: 1px solid rgba(31,42,36,0.12);
   background: rgba(31,42,36,0.92);
   color: #fff;
-  font-size: 28px;
-  line-height: 0;
   cursor: pointer;
-  box-shadow: 0 20px 52px rgba(0,0,0,0.20);
+  box-shadow: 0 18px 44px rgba(0,0,0,0.16);
+  transition: transform .16s ease, box-shadow .16s ease;
+}
+
+.btnAñadir:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 22px 54px rgba(0,0,0,0.20);
+}
+
+.plus{
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  position: relative;
+  background: rgba(255,255,255,0.14);
+  border: 1px solid rgba(255,255,255,0.18);
+}
+
+.plus .v,
+.plus .h{
+  position: absolute;
+  background: rgba(255,255,255,0.92);
+  border-radius: 999px;
+}
+.plus .v{ width: 2px; height: 12px; }
+.plus .h{ width: 12px; height: 2px; }
+
+/* Animaciones cards */
+.cards-enter-active,
+.cards-leave-active{
+  transition: opacity .18s ease, transform .18s ease;
+}
+
+.cards-enter-from{
+  opacity: 0;
+  transform: translateY(6px) scale(0.99);
+}
+
+.cards-leave-to{
+  opacity: 0;
+  transform: translateY(6px) scale(0.99);
+}
+
+.cards-leave-active{
+  position: absolute;
+}
+
+.cards-move{
+  transition: transform .18s ease;
 }
 
 @media (max-width: 720px){
   .grid{ grid-template-columns: 1fr; }
+  .controles{ grid-template-columns: 1fr; }
 }
+
+.progresoCtrl{
+  display:inline-flex;
+  gap: 6px;
+  margin-left: 10px;
+  vertical-align: middle;
+}
+
+.miniBtn{
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  border: 1px solid rgba(31,42,36,0.12);
+  background: rgba(255,255,255,0.55);
+  cursor: pointer;
+
+  display:grid;
+  place-items:center;
+
+  font-size: 14px;
+  line-height: 1;
+  opacity: 0.88;
+
+  transition: transform .12s ease, opacity .12s ease;
+}
+
+.miniBtn:hover{
+  transform: translateY(-0.5px);
+  opacity: 1;
+}
+
+.miniBtn:disabled{
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none;
+}
+
 </style>
