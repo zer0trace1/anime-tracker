@@ -8,6 +8,8 @@ import './assets/main.css'
 import { iniciarPersistenciaPerfiles } from '@/stores/perfiles'
 import { iniciarPersistenciaSeguimientos } from '@/stores/seguimientos'
 
+import { iniciarPersistenciaRecomendaciones } from '@/stores/recomendaciones'
+
 
 const app = createApp(App)
 
@@ -18,4 +20,5 @@ app.mount('#app')
 
 iniciarPersistenciaPerfiles()
 iniciarPersistenciaSeguimientos()
+iniciarPersistenciaRecomendaciones()
 

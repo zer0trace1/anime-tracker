@@ -6,6 +6,9 @@ import { useSeguimientosStore } from '@/stores/seguimientos'
 import type { TipoContenido, EstadoSeguimiento, Seguimiento } from '@/types/domain'
 import { resolverAvatar } from '@/assets/avatares'
 import ModalAñadir from '@/components/ModalAñadir.vue'
+import { useRecomendacionesStore } from '@/stores/recomendaciones'
+import ModalRecomendar from '@/components/ModalRecomendar.vue'
+import ModalRecomendaciones from '@/components/ModalRecomendaciones.vue'
 
 const router = useRouter()
 const perfiles = usePerfilesStore()
@@ -36,6 +39,24 @@ const nombresEstado: Record<EstadoSeguimiento, string> = {
   terminado: 'Terminado',
   en_pausa: 'En pausa',
   abandonado: 'Abandonado',
+}
+
+const recs = useRecomendacionesStore()
+
+const modalBuzonAbierto = ref(false)
+const modalRecomendarAbierto = ref(false)
+const itemParaRecomendar = ref<Seguimiento | null>(null)
+
+const otroPerfil = computed(() => perfiles.perfiles.find(p => p.id !== perfiles.perfilActivoId) ?? null)
+
+function abrirBuzon() {
+  modalBuzonAbierto.value = true
+}
+
+function abrirRecomendar(item: Seguimiento) {
+  if (!otroPerfil.value) return
+  itemParaRecomendar.value = item
+  modalRecomendarAbierto.value = true
 }
 
 const listaBase = computed(() => seguimientos.listaPorTipo(seccion.value))
@@ -174,9 +195,16 @@ function estiloPortada(item: Seguimiento) {
         </div>
       </div>
 
-      <button class="btnCambio" type="button" @click="cambiarPerfil">
-        Cambiar perfil
-      </button>
+      <div class="accionesTop">
+        <button class="btnRecs" type="button" @click="abrirBuzon">
+          Recomendaciones
+          <span v-if="recs.contadorPendientes" class="badge">{{ recs.contadorPendientes }}</span>
+        </button>
+
+        <button class="btnCambio" type="button" @click="cambiarPerfil">
+          Cambiar perfil
+        </button>
+      </div>
     </header>
 
     <nav class="tabs" aria-label="Secciones">
@@ -300,6 +328,16 @@ function estiloPortada(item: Seguimiento) {
             </div>
 
             <div class="accionesCard">
+              <button
+                v-if="otroPerfil"
+                class="recomendar"
+                type="button"
+                @click="abrirRecomendar(item)"
+                aria-label="Recomendar"
+                title="Recomendar"
+              >
+                ✨
+              </button>
               <button class="editar" type="button" @click="editar(item)" aria-label="Editar">✎</button>
               <button class="borrar" type="button" @click="eliminar(item)" aria-label="Eliminar">✕</button>
             </div>
@@ -344,6 +382,19 @@ function estiloPortada(item: Seguimiento) {
       @guardado="() => {}"
     />
   </div>
+
+  <ModalRecomendar
+    :abierto="modalRecomendarAbierto"
+    :item="itemParaRecomendar"
+    :to-perfil-id="otroPerfil?.id ?? null"
+    @cerrar="() => { modalRecomendarAbierto = false; itemParaRecomendar = null }"
+    @enviado="() => {}"
+  />
+
+  <ModalRecomendaciones
+    :abierto="modalBuzonAbierto"
+    @cerrar="() => (modalBuzonAbierto = false)"
+  />
 </template>
 
 <style scoped>
@@ -757,5 +808,44 @@ function estiloPortada(item: Seguimiento) {
   cursor: not-allowed;
   transform: none;
 }
+
+.accionesTop{
+  display:flex;
+  gap: 10px;
+  align-items:center;
+}
+
+.btnRecs{
+  border-radius: 999px;
+  padding: 10px 12px;
+  border: 1px solid rgba(31,42,36,0.12);
+  background: rgba(255,255,255,0.55);
+  cursor: pointer;
+  display:flex;
+  align-items:center;
+  gap: 8px;
+}
+
+.badge{
+  min-width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  display:grid;
+  place-items:center;
+  font-size: 12px;
+  background: rgba(31,42,36,0.92);
+  color: #fff;
+  padding: 0 6px;
+}
+
+.recomendar{
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  opacity: 0.60;
+  font-size: 14px;
+  padding: 4px 6px;
+}
+.recomendar:hover{ opacity: 0.90; }
 
 </style>

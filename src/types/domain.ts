@@ -35,3 +35,23 @@ export interface Seguimiento {
   createdAt: number
   updatedAt: number
 }
+
+export type EstadoRecomendacion = 'pendiente' | 'aceptada' | 'rechazada'
+
+export interface Recomendacion {
+  id: string
+  fromPerfilId: string
+  toPerfilId: string
+
+  tipo: TipoContenido
+  titulo: string
+  imagenUrl?: string
+  mensaje?: string
+
+  estado: EstadoRecomendacion
+  createdAt: number
+
+  // opcional: por si quieres enlazar con un seguimiento existente
+  origenSeguimientoId?: string
+}
+
