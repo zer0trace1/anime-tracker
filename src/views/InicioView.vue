@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { usePerfilesStore } from '@/stores/perfiles'
 import { useSeguimientosStore } from '@/stores/seguimientos'
+import { useSesionStore } from '@/stores/sesion'
 import type { TipoContenido, EstadoSeguimiento, Seguimiento } from '@/types/domain'
 import { resolverAvatar } from '@/assets/avatares'
 import ModalAñadir from '@/components/ModalAñadir.vue'
@@ -13,6 +14,7 @@ import ModalRecomendaciones from '@/components/ModalRecomendaciones.vue'
 const router = useRouter()
 const perfiles = usePerfilesStore()
 const seguimientos = useSeguimientosStore()
+const sesion = useSesionStore()
 
 const seccion = ref<TipoContenido>('anime')
 
@@ -49,11 +51,21 @@ const itemParaRecomendar = ref<Seguimiento | null>(null)
 
 const otroPerfil = computed(() => perfiles.perfiles.find(p => p.id !== perfiles.perfilActivoId) ?? null)
 
+const modoLectura = computed(() => {
+  // Si no sabemos quién es el usuario (perfilPropioId null), no bloqueamos.
+  if (!sesion.perfilPropioId) return false
+  return sesion.perfilPropioId !== perfiles.perfilActivoId
+})
+
+const puedeEditar = computed(() => !modoLectura.value)
+
 function abrirBuzon() {
+  if (!puedeEditar.value) return
   modalBuzonAbierto.value = true
 }
 
 function abrirRecomendar(item: Seguimiento) {
+  if (!puedeEditar.value) return
   if (!otroPerfil.value) return
   itemParaRecomendar.value = item
   modalRecomendarAbierto.value = true
@@ -122,11 +134,13 @@ const stats = computed(() => {
 })
 
 function abrirAñadir() {
+  if (!puedeEditar.value) return
   itemEditando.value = null
   modalAbierto.value = true
 }
 
 function editar(item: Seguimiento) {
+  if (!puedeEditar.value) return
   itemEditando.value = item
   modalAbierto.value = true
 }
@@ -137,10 +151,12 @@ function cerrarModal() {
 }
 
 function eliminar(item: Seguimiento) {
+  if (!puedeEditar.value) return
   seguimientos.eliminar(perfiles.perfilActivoId, item.id)
 }
 
 function ajustar(item: Seguimiento, delta: number) {
+  if (!puedeEditar.value) return
   seguimientos.ajustarProgreso(perfiles.perfilActivoId, item.id, delta)
 }
 
@@ -190,13 +206,15 @@ function estiloPortada(item: Seguimiento) {
           alt="Avatar"
         />
         <div class="saludo">
+          <div class="logeado">Estás logeado como: <strong>{{ sesion.nombreLogeado }}</strong></div>
           <div class="hola">Hola, {{ perfiles.perfilActivo?.nombre }}</div>
+          <div v-if="modoLectura" class="tagLectura">Modo lectura</div>
           <div class="sub">Tu rincón cozy para llevar el seguimiento ✨</div>
         </div>
       </div>
 
       <div class="accionesTop">
-        <button class="btnRecs" type="button" @click="abrirBuzon">
+        <button class="btnRecs" type="button" @click="abrirBuzon" :disabled="modoLectura" :title="modoLectura ? 'Estás en modo lectura en este perfil' : 'Ver recomendaciones'">
           Recomendaciones
           <span v-if="recs.contadorPendientes" class="badge">{{ recs.contadorPendientes }}</span>
         </button>
@@ -289,7 +307,7 @@ function estiloPortada(item: Seguimiento) {
                       type="button"
                       class="miniBtn"
                       @click="ajustar(item, -1)"
-                      :disabled="item.progresoActual <= 0"
+                      :disabled="!puedeEditar || item.progresoActual <= 0"
                       aria-label="Restar 1"
                     >
                       −1
@@ -299,7 +317,7 @@ function estiloPortada(item: Seguimiento) {
                       type="button"
                       class="miniBtn"
                       @click="ajustar(item, +1)"
-                      :disabled="!!item.progresoTotal && item.progresoActual >= item.progresoTotal"
+                      :disabled="!puedeEditar || (!!item.progresoTotal && item.progresoActual >= item.progresoTotal)"
                       aria-label="Sumar 1"
                     >
                       +1
@@ -329,7 +347,7 @@ function estiloPortada(item: Seguimiento) {
 
             <div class="accionesCard">
               <button
-                v-if="otroPerfil"
+                v-if="puedeEditar && otroPerfil"
                 class="recomendar"
                 type="button"
                 @click="abrirRecomendar(item)"
@@ -338,8 +356,8 @@ function estiloPortada(item: Seguimiento) {
               >
                 ✨
               </button>
-              <button class="editar" type="button" @click="editar(item)" aria-label="Editar">✎</button>
-              <button class="borrar" type="button" @click="eliminar(item)" aria-label="Eliminar">✕</button>
+              <button v-if="puedeEditar" class="editar" type="button" @click="editar(item)" aria-label="Editar">✎</button>
+              <button v-if="puedeEditar" class="borrar" type="button" @click="eliminar(item)" aria-label="Eliminar">✕</button>
             </div>
           </div>
         </article>
@@ -352,7 +370,8 @@ function estiloPortada(item: Seguimiento) {
           <div class="vacioSub">
             Pulsa “Añadir” para empezar tu lista de {{ nombresSeccion[seccion].toLowerCase() }}.
           </div>
-          <button class="btnPri" type="button" @click="abrirAñadir">Añadir</button>
+          <button v-if="puedeEditar" class="btnPri" type="button" @click="abrirAñadir">Añadir</button>
+          <div v-else class="vacioSub">Estás en modo lectura en este perfil. Cambia a tu perfil para añadir.</div>
         </div>
 
         <div v-else class="vacioCaja">
@@ -363,7 +382,7 @@ function estiloPortada(item: Seguimiento) {
       </div>
 
       <!-- Botón debajo (solo si ya hay items en la sección) -->
-      <div v-if="listaBase.length" class="barraAñadir">
+      <div v-if="listaBase.length && puedeEditar" class="barraAñadir">
         <button class="btnAñadir" type="button" @click="abrirAñadir" aria-label="Añadir">
           <span class="plus" aria-hidden="true">
             <span class="v"></span>
@@ -425,6 +444,25 @@ function estiloPortada(item: Seguimiento) {
   border: 1px solid rgba(31,42,36,0.10);
   background: rgba(255,255,255,0.45);
   object-fit: cover;
+}
+
+.logeado{
+  font-size: 12.5px;
+  opacity: 0.72;
+}
+
+.tagLectura{
+  margin-top: 6px;
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  gap: 8px;
+  font-size: 12px;
+  opacity: 0.86;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(31,42,36,0.12);
+  background: rgba(230, 170, 60, 0.12);
 }
 
 .hola{
@@ -824,6 +862,11 @@ function estiloPortada(item: Seguimiento) {
   display:flex;
   align-items:center;
   gap: 8px;
+}
+
+.btnRecs:disabled{
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 .badge{

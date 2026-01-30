@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { usePerfilesStore } from '@/stores/perfiles'
+import { useSesionStore } from '@/stores/sesion'
 import { resolverAvatar } from '@/assets/avatares'
 import { leerImagenCuadradaComoDataUrl } from '@/services/imagenes'
-import totoroGif from '@/assets/decor/totoro-gif.gif'
 
 const router = useRouter()
 const perfiles = usePerfilesStore()
+const sesion = useSesionStore()
 
-// ✅ Un único input file (fuera del v-for)
 const inputFoto = ref<HTMLInputElement | null>(null)
 const perfilParaFoto = ref<string | null>(null)
 
@@ -20,16 +20,14 @@ function entrar(id: string) {
 
 function cambiarAvatar(id: string, ev: MouseEvent) {
   ev.stopPropagation()
+  if (sesion.perfilPropioId && sesion.perfilPropioId !== id) return
   perfiles.cambiarAvatar(id)
 }
 
 function elegirFoto(id: string, ev: MouseEvent) {
   ev.stopPropagation()
+  if (sesion.perfilPropioId && sesion.perfilPropioId !== id) return
   perfilParaFoto.value = id
-
-  // Opcional: limpiar para poder escoger el mismo archivo de nuevo
-  if (inputFoto.value) inputFoto.value.value = ''
-
   inputFoto.value?.click()
 }
 
@@ -37,24 +35,27 @@ async function onArchivoCambiado(ev: Event) {
   const target = ev.target as HTMLInputElement
   const file = target.files?.[0]
   const id = perfilParaFoto.value
-
-  if (!file || !id) {
-    perfilParaFoto.value = null
-    return
-  }
+  if (!file || !id) return
 
   // Recorta a cuadrado y comprime (importante para localStorage)
   const dataUrl = await leerImagenCuadradaComoDataUrl(file, 320, 0.85)
   perfiles.establecerAvatarPersonalizado(id, dataUrl)
 
-  // reset
+  // reset para poder elegir el mismo archivo otra vez si quieres
   target.value = ''
   perfilParaFoto.value = null
 }
 
 function quitarFoto(id: string, ev: MouseEvent) {
   ev.stopPropagation()
+  if (sesion.perfilPropioId && sesion.perfilPropioId !== id) return
   perfiles.quitarAvatarPersonalizado(id)
+}
+
+const nombreLogeado = computed(() => sesion.nombreLogeado)
+
+function esPropio(id: string) {
+  return !sesion.perfilPropioId || sesion.perfilPropioId === id
 }
 </script>
 
@@ -65,6 +66,7 @@ function quitarFoto(id: string, ev: MouseEvent) {
         <span class="punto" />
         <h1>Track Anime</h1>
       </div>
+      <p class="logeado">Estás logeado como: <strong>{{ nombreLogeado }}</strong></p>
       <p class="sub">Elige tu perfil para continuar</p>
     </div>
 
@@ -78,38 +80,40 @@ function quitarFoto(id: string, ev: MouseEvent) {
         :aria-label="`Entrar como ${p.nombre}`"
       >
         <div class="avatarWrap">
-          <img
-            class="avatar"
-            :src="resolverAvatar(p.avatarId, p.avatarPersonalizado)"
-            :alt="`Avatar de ${p.nombre}`"
-          />
+          <img class="avatar" :src="resolverAvatar(p.avatarId, p.avatarPersonalizado)" :alt="`Avatar de ${p.nombre}`" />
         </div>
 
         <div class="nombre">{{ p.nombre }}</div>
 
         <div class="acciones">
           <span class="pista">Pulsa para entrar</span>
-          <!--<span class="separador">·</span>-->
-          <!--<span class="link" role="button" @click="cambiarAvatar(p.id, $event)">Cambiar avatar</span>-->
-          <span class="separador">·</span>
-          <span class="link" role="button" @click="elegirFoto(p.id, $event)">Elegir foto</span>
-          <span v-if="p.avatarPersonalizado" class="separador">·</span>
-          <span v-if="p.avatarPersonalizado" class="link" role="button" @click="quitarFoto(p.id, $event)">Quitar</span>
+          <template v-if="esPropio(p.id)">
+            <span class="separador">·</span>
+            <span class="link" role="button" @click="cambiarAvatar(p.id, $event)">Cambiar avatar</span>
+            <span class="separador">·</span>
+            <span class="link" role="button" @click="elegirFoto(p.id, $event)">Elegir foto</span>
+            <span v-if="p.avatarPersonalizado" class="separador">·</span>
+            <span v-if="p.avatarPersonalizado" class="link" role="button" @click="quitarFoto(p.id, $event)">Quitar</span>
+          </template>
+
+          <template v-else>
+            <span class="separador">·</span>
+            <span class="soloLectura">Solo lectura</span>
+          </template>
         </div>
+
+        <input
+          ref="inputFoto"
+          type="file"
+          accept="image/*"
+          style="display:none"
+          @change="onArchivoCambiado"
+        />
       </button>
     </div>
 
-    <!-- ✅ Input único, fuera del v-for -->
-    <input
-      ref="inputFoto"
-      type="file"
-      accept="image/*"
-      style="display:none"
-      @change="onArchivoCambiado"
-    />
-    <img class="decor totoro" :src="totoroGif" alt="" aria-hidden="true" />
     <div class="pie">
-      <span class="nota">Realiza el seguimiento de tu contenido favorito ☺️</span>
+      <span class="nota">Cozy · Sencilla · Minimalista</span>
     </div>
   </div>
 </template>
@@ -122,54 +126,11 @@ function quitarFoto(id: string, ev: MouseEvent) {
   justify-content:center;
   align-items:center;
   padding: 40px 18px;
-  position: relative;
-  overflow: hidden;
 }
 
 .cabecera{
   text-align:center;
   margin-bottom: 26px;
-  position: relative;
-  z-index: 2;
-}
-
-/* Todo tu contenido por encima */
-.grid, .pie{
-  position: relative;
-  z-index: 2;
-}
-
-/* Decoraciones por debajo y sin bloquear clicks */
-.decor{
-  position: absolute;
-  z-index: 1;
-  pointer-events: none;
-  opacity: 0.92;
-  filter: drop-shadow(0 18px 28px rgba(0,0,0,0.10));
-}
-
-/* Totoro caminando por abajo */
-.totoro{
-  width: 220px;
-  bottom: 14px;
-  left: -240px;
-  animation: totoroCamina 18s linear infinite;
-  animation-delay: -3s;
-}
-
-@keyframes totoroCamina{
-  from   { transform: translateX(calc(100vw + 520px)); }
-  to { transform: translateX(0); }
-}
-
-/* En móvil, mejor más discreto */
-@media (max-width: 520px){
-  .totoro{ width: 170px; bottom: 8px; }
-}
-
-/* Respeta usuarios con reducción de movimiento */
-@media (prefers-reduced-motion: reduce){
-  .totoro{ animation: none !important; }
 }
 
 .marca{
@@ -195,6 +156,21 @@ h1{
 .sub{
   margin: 10px 0 0;
   opacity: 0.75;
+}
+
+.logeado{
+  margin: 12px 0 0;
+  font-size: 12.5px;
+  opacity: 0.72;
+}
+
+.soloLectura{
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(31,42,36,0.12);
+  background: rgba(230, 170, 60, 0.12);
 }
 
 .grid{
@@ -237,7 +213,7 @@ h1{
   height: 100%;
   border-radius: 28px;
   display:block;
-  object-fit: cover;
+  object-fit: cover;   /* <-- clave */
   object-position: center;
 }
 
