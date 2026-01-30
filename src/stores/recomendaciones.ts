@@ -3,11 +3,27 @@ import type { Recomendacion, EstadoRecomendacion, TipoContenido } from '@/types/
 import { cargarJSON, guardarJSON } from '@/services/storage'
 import { usePerfilesStore } from '@/stores/perfiles'
 
+import {
+  collection,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  orderBy,
+  query,
+  setDoc,
+  updateDoc,
+  type Unsubscribe,
+} from 'firebase/firestore'
+import { db } from '@/services/firebase'
+
 type EstadoRecs = {
   porDestino: Record<string, Recomendacion[]>
 }
 
 const KEY = 'track-anime:recomendaciones:v1'
+const COL = collection(db, 'pareja', 'anime-tracker', 'recomendaciones')
+
+let off: Unsubscribe | null = null
 
 export const useRecomendacionesStore = defineStore('recomendaciones', {
   state: (): EstadoRecs => cargarJSON(KEY, { porDestino: {} }),
@@ -29,6 +45,38 @@ export const useRecomendacionesStore = defineStore('recomendaciones', {
   },
 
   actions: {
+    // --- Firebase realtime ---
+    conectarFirebase() {
+      if (off) return
+
+      const q = query(COL, orderBy('createdAt', 'desc'))
+      off = onSnapshot(
+        q,
+        (snap) => {
+          const nuevo: Record<string, Recomendacion[]> = {}
+
+          snap.forEach((d) => {
+            const data = d.data() as Omit<Recomendacion, 'id'>
+            const item: Recomendacion = { ...data, id: d.id } as Recomendacion
+
+            const to = item.toPerfilId
+            if (!nuevo[to]) nuevo[to] = []
+            nuevo[to].push(item)
+          })
+
+          this.porDestino = nuevo
+        },
+        (err) => {
+          console.error('[Firestore][recomendaciones] onSnapshot error:', err)
+        }
+      )
+    },
+
+    desconectarFirebase() {
+      off?.()
+      off = null
+    },
+
     asegurarDestino(toPerfilId: string) {
       if (!this.porDestino[toPerfilId]) this.porDestino[toPerfilId] = []
     },
@@ -44,8 +92,9 @@ export const useRecomendacionesStore = defineStore('recomendaciones', {
     }) {
       this.asegurarDestino(args.toPerfilId)
 
+      const id = crypto.randomUUID()
       const rec: Recomendacion = {
-        id: crypto.randomUUID(),
+        id,
         fromPerfilId: args.fromPerfilId,
         toPerfilId: args.toPerfilId,
         tipo: args.tipo,
@@ -57,8 +106,14 @@ export const useRecomendacionesStore = defineStore('recomendaciones', {
         createdAt: Date.now(),
       }
 
+      // Optimista
       this.porDestino[args.toPerfilId]!.unshift(rec)
-      return rec.id
+
+      void setDoc(doc(COL, id), rec).catch((e) =>
+        console.error('[Firestore][recomendaciones] enviar error:', e)
+      )
+
+      return id
     },
 
     marcarEstado(toPerfilId: string, id: string, estado: EstadoRecomendacion) {
@@ -69,17 +124,27 @@ export const useRecomendacionesStore = defineStore('recomendaciones', {
       const actual = lista[idx]
       if (!actual) return
 
+      // Optimista
       lista[idx] = { ...actual, estado }
+
+      void updateDoc(doc(COL, id), { estado }).catch((e) =>
+        console.error('[Firestore][recomendaciones] marcarEstado error:', e)
+      )
     },
 
     eliminar(toPerfilId: string, id: string) {
       this.asegurarDestino(toPerfilId)
       const lista = this.porDestino[toPerfilId] ?? (this.porDestino[toPerfilId] = [])
       this.porDestino[toPerfilId] = lista.filter(r => r.id !== id)
+
+      void deleteDoc(doc(COL, id)).catch((e) =>
+        console.error('[Firestore][recomendaciones] eliminar error:', e)
+      )
     },
   },
 })
 
+// Caché local opcional
 export function iniciarPersistenciaRecomendaciones(store = useRecomendacionesStore()) {
   store.$subscribe((_m, state) => guardarJSON(KEY, state))
 }

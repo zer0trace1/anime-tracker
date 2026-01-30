@@ -16,6 +16,9 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 
+import { iniciarSyncFirebase } from '@/services/syncFirebase'
+iniciarSyncFirebase()
+
 app.mount('#app')
 
 iniciarPersistenciaPerfiles()
