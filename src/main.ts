@@ -12,6 +12,7 @@ import { iniciarPersistenciaRecomendaciones } from '@/stores/recomendaciones'
 
 import { iniciarSyncFirebase } from '@/services/syncFirebase'
 import { useSesionStore } from '@/stores/sesion'
+import { usePerfilesStore } from '@/stores/perfiles'
 
 const app = createApp(App)
 
@@ -26,6 +27,9 @@ useSesionStore(pinia).iniciar()
 
 // ✅ 3) Iniciar sync Firebase (conecta snapshots según login)
 iniciarSyncFirebase()
+
+const perfiles = usePerfilesStore()
+perfiles.iniciarSyncFirestore()
 
 app.mount('#app')
 

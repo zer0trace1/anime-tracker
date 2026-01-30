@@ -1,19 +1,22 @@
 import { defineStore } from 'pinia'
 import type { PerfilUsuario, AvatarId } from '@/types/domain'
 import { cargarJSON, guardarJSON } from '@/services/storage'
+import { collection, doc, onSnapshot, setDoc, serverTimestamp } from 'firebase/firestore'
+import { db } from '@/services/firebase' // <-- ajusta si tu ruta real es distinta
 
 type EstadoPerfiles = {
   perfiles: PerfilUsuario[]
   perfilActivoId: string
 }
 
+export const PERFIL_PABLO_ID = 'pablo'
+export const PERFIL_CELIA_ID = 'celia'
+export type PerfilId = typeof PERFIL_PABLO_ID | typeof PERFIL_CELIA_ID
+
 const KEY = 'track-anime:perfiles:v1'
 const AVATARES: AvatarId[] = ['ghibli-1', 'ghibli-2', 'ghibli-3', 'ghibli-4', 'ghibli-5', 'ghibli-6']
 
-// IDs fijos (muy importante para sincronizar en Firebase)
-export const PERFIL_PABLO_ID = 'pablo'
-export const PERFIL_CELIA_ID = 'celia'
-
+// IDs estables (importante para sincronización)
 function semilla(): EstadoPerfiles {
   const pablo: PerfilUsuario = {
     id: PERFIL_PABLO_ID,
@@ -29,57 +32,11 @@ function semilla(): EstadoPerfiles {
     avatarPersonalizado: null,
   }
 
-  return { perfiles: [pablo, celia], perfilActivoId: PERFIL_PABLO_ID }
-}
-
-/**
- * Migra perfiles antiguos (con UUID) a ids fijos ('pablo'/'celia')
- * intentando conservar avatar/avatarPersonalizado.
- */
-function normalizarEstado(input: EstadoPerfiles): EstadoPerfiles {
-  const porNombre = new Map<string, PerfilUsuario>()
-  for (const p of input.perfiles ?? []) {
-    porNombre.set(p.nombre.toLowerCase().trim(), p)
-  }
-
-  const viejoPablo = porNombre.get('pablo')
-  const viejoCelia = porNombre.get('celia')
-
-  const pablo: PerfilUsuario = {
-    id: PERFIL_PABLO_ID,
-    nombre: 'Pablo',
-    avatarId: viejoPablo?.avatarId ?? 'ghibli-2',
-    avatarPersonalizado: viejoPablo?.avatarPersonalizado ?? null,
-  }
-
-  const celia: PerfilUsuario = {
-    id: PERFIL_CELIA_ID,
-    nombre: 'Celia',
-    avatarId: viejoCelia?.avatarId ?? 'ghibli-1',
-    avatarPersonalizado: viejoCelia?.avatarPersonalizado ?? null,
-  }
-
-  // Mantén el perfil activo si antes era Pablo/Celia (por nombre).
-  const activoAnterior = input.perfiles.find(p => p.id === input.perfilActivoId)
-  const nombreActivo = activoAnterior?.nombre?.toLowerCase().trim()
-
-  const perfilActivoId =
-    nombreActivo === 'celia' ? PERFIL_CELIA_ID
-    : PERFIL_PABLO_ID
-
-  return { perfiles: [pablo, celia], perfilActivoId }
+  return { perfiles: [pablo, celia], perfilActivoId: pablo.id }
 }
 
 export const usePerfilesStore = defineStore('perfiles', {
-  state: (): EstadoPerfiles => {
-    const raw = cargarJSON(KEY, semilla())
-    // Si ya está en formato correcto, se quedará igual; si no, migra.
-    const yaOk =
-      raw.perfiles?.some(p => p.id === PERFIL_PABLO_ID) &&
-      raw.perfiles?.some(p => p.id === PERFIL_CELIA_ID)
-
-    return yaOk ? raw : normalizarEstado(raw)
-  },
+  state: (): EstadoPerfiles => cargarJSON(KEY, semilla()),
 
   getters: {
     perfilActivo(state) {
@@ -89,12 +46,66 @@ export const usePerfilesStore = defineStore('perfiles', {
 
   actions: {
     seleccionarPerfil(id: string) {
-      // Solo permitimos ids fijos, por si acaso
-      if (id !== PERFIL_PABLO_ID && id !== PERFIL_CELIA_ID) return
       this.perfilActivoId = id
     },
 
-    cambiarAvatar(id: string) {
+    // ---------- Firestore sync ----------
+    iniciarSyncFirestore() {
+      // Escucha en tiempo real los perfiles en Firestore y los mete en el store
+      const colRef = collection(db, 'pareja', 'anime-tracker', 'perfiles')
+
+      onSnapshot(colRef, (snap) => {
+        const porId = new Map(this.perfiles.map(p => [p.id, p]))
+
+        snap.docs.forEach(d => {
+          const data = d.data() as Partial<PerfilUsuario>
+          const id = d.id
+
+          const existente = porId.get(id)
+          if (existente) {
+            // mutamos para mantener reactividad
+            if (typeof data.nombre === 'string') existente.nombre = data.nombre
+            if (typeof data.avatarId === 'string') existente.avatarId = data.avatarId as AvatarId
+            // importante: en Firestore guardamos null, no undefined
+            if ('avatarPersonalizado' in data) {
+              existente.avatarPersonalizado = (data as any).avatarPersonalizado ?? null
+            }
+          } else {
+            this.perfiles.push({
+              id,
+              nombre: (data.nombre as string) ?? id,
+              avatarId: (data.avatarId as AvatarId) ?? 'ghibli-1',
+              avatarPersonalizado: (data as any).avatarPersonalizado ?? null,
+            })
+          }
+        })
+
+        // guarda también en local (por si recargas rápido / offline)
+        guardarJSON(KEY, { perfiles: this.perfiles, perfilActivoId: this.perfilActivoId })
+      })
+    },
+
+    async guardarPerfilEnFirestore(id: string) {
+      const p = this.perfiles.find(x => x.id === id)
+      if (!p) return
+
+      const ref = doc(db, 'pareja', 'anime-tracker', 'perfiles', id)
+
+      // OJO: Firestore NO acepta undefined, usamos null
+      await setDoc(
+        ref,
+        {
+          nombre: p.nombre,
+          avatarId: p.avatarId,
+          avatarPersonalizado: p.avatarPersonalizado ?? null,
+          updatedAt: serverTimestamp(),
+        },
+        { merge: true }
+      )
+    },
+
+    // ---------- acciones de UI ----------
+    async cambiarAvatar(id: string) {
       const p = this.perfiles.find(x => x.id === id)
       if (!p) return
 
@@ -102,18 +113,24 @@ export const usePerfilesStore = defineStore('perfiles', {
       const safeIdx = idx === -1 ? 0 : idx
       const next = AVATARES[(safeIdx + 1) % AVATARES.length]!
       p.avatarId = next
+
+      await this.guardarPerfilEnFirestore(id)
     },
 
-    establecerAvatarPersonalizado(id: string, dataUrl: string) {
+    async establecerAvatarPersonalizado(id: string, dataUrl: string) {
       const p = this.perfiles.find(x => x.id === id)
       if (!p) return
       p.avatarPersonalizado = dataUrl
+
+      await this.guardarPerfilEnFirestore(id)
     },
 
-    quitarAvatarPersonalizado(id: string) {
+    async quitarAvatarPersonalizado(id: string) {
       const p = this.perfiles.find(x => x.id === id)
       if (!p) return
       p.avatarPersonalizado = null
+
+      await this.guardarPerfilEnFirestore(id)
     },
   },
 })

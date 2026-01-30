@@ -2,7 +2,7 @@ export type AvatarId = 'ghibli-1' | 'ghibli-2' | 'ghibli-3' | 'ghibli-4' | 'ghib
 
 export interface PerfilUsuario {
   id: string
-  nombre: 'Pablo' | 'Celia'
+  nombre: string
   avatarId: AvatarId
   avatarPersonalizado?: string | null // dataURL (image/webp o jpeg)
 }
