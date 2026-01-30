@@ -24,22 +24,30 @@ function cerrar() {
 
 function aceptar(r: Recomendacion) {
   // Crea el seguimiento en tu lista
+  // (OJO: Firestore no admite `undefined`, así que aquí evitamos mandar campos indefinidos)
+  const comentario = r.mensaje
+    ? `Recomendado por ${nombreDe(r.fromPerfilId)}: ${r.mensaje}`
+    : `Recomendado por ${nombreDe(r.fromPerfilId)}`
+
   seguimientos.crear(perfiles.perfilActivoId, {
     tipo: r.tipo,
     titulo: r.titulo,
     estado: 'pendiente',
-    progresoActual: r.tipo === 'pelicula' ? 0 : 0,
-    progresoTotal: undefined,
-    nota: undefined,
-    comentario: r.mensaje ? `Recomendado por ${nombreDe(r.fromPerfilId)}: ${r.mensaje}` : `Recomendado por ${nombreDe(r.fromPerfilId)}`,
-    imagenUrl: r.imagenUrl,
-  })
+    ...(r.tipo !== 'pelicula' ? { progresoActual: 0 } : {}),
+    ...(r.imagenUrl ? { imagenUrl: r.imagenUrl } : {}),
+    ...(comentario ? { comentario } : {}),
+  } as any)
 
-  recs.marcarEstado(perfiles.perfilActivoId, r.id, 'aceptada')
+  // Eliminamos la recomendación directamente (sin historial)
+  recs.eliminar(perfiles.perfilActivoId, r.id)
+
+  // Si ya no quedan pendientes, cerramos el modal
+  if (pendientes.value.length <= 1) cerrar()
 }
 
 function rechazar(r: Recomendacion) {
-  recs.marcarEstado(perfiles.perfilActivoId, r.id, 'rechazada')
+  // Eliminamos la recomendación directamente
+  recs.eliminar(perfiles.perfilActivoId, r.id)
 }
 </script>
 
