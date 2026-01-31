@@ -1,5 +1,6 @@
 <template>
   <div class="pantalla">
+    <img class="totoro" src="@/assets/decor/totoro-gif.gif" alt="" aria-hidden="true" />
     <div class="contenido">
       <h1 class="titulo">Track Anime</h1>
       <!-- UBICACION TEMPORAL BOTON LOGOUT -->
@@ -168,6 +169,29 @@ function fileToDataUrlResized(file: File, maxSide = 256, quality = 0.85): Promis
   display: grid;
   place-items: center;
   padding: 40px 16px;
+  position: relative;
+}
+/* Totoro caminando */
+.totoro{
+  position: fixed;
+  left: -180px;
+  bottom: 16px;
+  width: 140px;
+  height: auto;
+  opacity: 0.9;
+  pointer-events: none;
+  z-index: 0;
+  filter: drop-shadow(0 10px 18px rgba(0,0,0,0.14));
+  animation: totoro-walk 18s linear infinite;
+}
+
+@keyframes totoro-walk{
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(calc(100vw + 360px)); }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .totoro{ animation: none; left: 16px; }
 }
 .contenido {
   width: min(920px, 100%);
