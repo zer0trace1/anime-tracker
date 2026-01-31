@@ -10,11 +10,14 @@ import ModalAñadir from '@/components/ModalAñadir.vue'
 import { useRecomendacionesStore } from '@/stores/recomendaciones'
 import ModalRecomendar from '@/components/ModalRecomendar.vue'
 import ModalRecomendaciones from '@/components/ModalRecomendaciones.vue'
+import ModalDetalleSeguimiento from '@/components/ModalDetalleSeguimiento.vue'
 
 const router = useRouter()
 const perfiles = usePerfilesStore()
 const seguimientos = useSeguimientosStore()
 const sesion = useSesionStore()
+const modalDetalleAbierto = ref(false)
+const itemDetalle = ref<Seguimiento | null>(null)
 
 const seccion = ref<TipoContenido>('anime')
 
@@ -58,6 +61,16 @@ const modoLectura = computed(() => {
 })
 
 const puedeEditar = computed(() => !modoLectura.value)
+
+function abrirDetalle(item: Seguimiento) {
+  itemDetalle.value = item
+  modalDetalleAbierto.value = true
+}
+
+function cerrarDetalle() {
+  modalDetalleAbierto.value = false
+  itemDetalle.value = null
+}
 
 function abrirBuzon() {
   if (!puedeEditar.value) return
@@ -348,7 +361,8 @@ function estiloPortada(item: Seguimiento) {
 
       <!-- Lista -->
       <TransitionGroup v-if="lista.length" name="cards" tag="div" class="grid">
-        <article v-for="item in lista" :key="item.id" class="card">
+        <!--<article v-for="item in lista" :key="item.id" class="card">-->
+        <article v-for="item in lista" :key="item.id" class="card" @click="abrirDetalle(item)">
           <div class="filaCard">
             <div class="portada" :style="estiloPortada(item)" :class="{ conImagen: !!item.imagenUrl }">
               <img v-if="item.imagenUrl" :src="item.imagenUrl" alt="" />
@@ -370,7 +384,7 @@ function estiloPortada(item: Seguimiento) {
                     <button
                       type="button"
                       class="miniBtn"
-                      @click="ajustar(item, -1)"
+                      @click.stop="ajustar(item, -1)"
                       :disabled="!puedeEditar || item.progresoActual <= 0"
                       aria-label="Restar 1"
                     >
@@ -380,7 +394,7 @@ function estiloPortada(item: Seguimiento) {
                     <button
                       type="button"
                       class="miniBtn"
-                      @click="ajustar(item, +1)"
+                      @click.stop="ajustar(item, +1)"
                       :disabled="!puedeEditar || (!!item.progresoTotal && item.progresoActual >= item.progresoTotal)"
                       aria-label="Sumar 1"
                     >
@@ -396,7 +410,7 @@ function estiloPortada(item: Seguimiento) {
                   :key="t"
                   class="tag"
                   type="button"
-                  @click="busqueda = t"
+                  @click.stop="busqueda = t"
                   :title="`Filtrar por ${t}`"
                 >
                   #{{ t }}
@@ -418,7 +432,7 @@ function estiloPortada(item: Seguimiento) {
                 v-if="item.comentario && item.comentario.length > 90"
                 type="button"
                 class="verMas"
-                @click="toggleComentario(item.id)"
+                @click.stop="toggleComentario(item.id)"
               >
                 {{ comentariosAbiertos[item.id] ? 'Ver menos' : 'Ver más' }}
               </button>
@@ -429,14 +443,14 @@ function estiloPortada(item: Seguimiento) {
                 v-if="puedeEditar && otroPerfil"
                 class="recomendar"
                 type="button"
-                @click="abrirRecomendar(item)"
+                @click.stop="abrirRecomendar(item)"
                 aria-label="Recomendar"
                 title="Recomendar"
               >
                 ✨
               </button>
-              <button v-if="puedeEditar" class="editar" type="button" @click="editar(item)" aria-label="Editar">✎</button>
-              <button v-if="puedeEditar" class="borrar" type="button" @click="eliminar(item)" aria-label="Eliminar">✕</button>
+              <button v-if="puedeEditar" class="editar" type="button" @click.stop="editar(item)" aria-label="Editar">✎</button>
+              <button v-if="puedeEditar" class="borrar" type="button" @click.stop="eliminar(item)" aria-label="Eliminar">✕</button>
             </div>
           </div>
         </article>
@@ -492,6 +506,13 @@ function estiloPortada(item: Seguimiento) {
   <ModalRecomendaciones
     :abierto="modalBuzonAbierto"
     @cerrar="() => (modalBuzonAbierto = false)"
+  />
+
+  <ModalDetalleSeguimiento
+    :abierto="modalDetalleAbierto"
+    :item="itemDetalle"
+    :modo-lectura="modoLectura"
+    @cerrar="cerrarDetalle"
   />
 </template>
 
@@ -665,6 +686,9 @@ function estiloPortada(item: Seguimiento) {
   backdrop-filter: blur(8px);
   overflow: hidden;
 }
+
+.card{ cursor: pointer; }
+.card:hover{ box-shadow: 0 18px 44px rgba(0,0,0,0.10); }
 
 .filaCard{
   display:flex;
