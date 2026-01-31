@@ -133,6 +133,11 @@ const stats = computed(() => {
   return counts
 })
 
+async function logout() {
+  await sesion.logout()
+  router.push('/acceso') // o { name: 'acceso' } si tienes ruta con name
+}
+
 function abrirAñadir() {
   if (!puedeEditar.value) return
   itemEditando.value = null
@@ -221,6 +226,10 @@ function estiloPortada(item: Seguimiento) {
 
         <button class="btnCambio" type="button" @click="cambiarPerfil">
           Cambiar perfil
+        </button>
+
+        <button class="btnCambio" type="button" @click="logout">
+          Cerrar sesión
         </button>
       </div>
     </header>

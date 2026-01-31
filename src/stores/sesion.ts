@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from '@/services/firebase'
 import { PERFIL_PABLO_ID, PERFIL_CELIA_ID } from '@/stores/perfiles'
+import { signOut } from 'firebase/auth'
 
 type EstadoSesion = {
   uid: string | null
@@ -51,6 +52,15 @@ export const useSesionStore = defineStore('sesion', {
         this.email = user.email ?? null
         this.perfilPropioId = perfilPorUid(user.uid)
       })
+    },
+    async logout() {
+      await signOut(auth)
+
+      // opcional pero recomendado: reset inmediato de estado local
+      this.uid = null
+      this.email = null
+      this.perfilPropioId = null
+      this.cargando = false
     },
   },
 })
