@@ -26,7 +26,7 @@ type EstadoSeguimientos = {
 type PatchSeguimiento = Partial<
   Pick<
     Seguimiento,
-    'tipo' | 'titulo' | 'estado' | 'progresoActual' | 'progresoTotal' | 'nota' | 'comentario' | 'imagenUrl'
+    'tipo' | 'titulo' | 'estado' | 'progresoActual' | 'progresoTotal' | 'nota' | 'comentario' | 'imagenUrl' | 'etiquetas'
   >
 >
 
@@ -39,6 +39,22 @@ let off: Unsubscribe | null = null
 
 function isPermDenied(e: unknown) {
   return (e as FirestoreError)?.code === 'permission-denied'
+}
+
+function cleanUndefined<T extends Record<string, any>>(obj: T) {
+  return Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined)) as T
+}
+
+function normalizarEtiquetas(tags?: string[]) {
+  if (!tags) return []
+  return Array.from(
+    new Set(
+      tags
+        .map(t => t.trim())
+        .filter(Boolean)
+        .map(t => t.toLowerCase())
+    )
+  )
 }
 
 export const useSeguimientosStore = defineStore('seguimientos', {
@@ -68,8 +84,14 @@ export const useSeguimientosStore = defineStore('seguimientos', {
           const nuevo: Record<string, Seguimiento[]> = {}
 
           snap.forEach((d) => {
+            //const data = d.data() as Omit<Seguimiento, 'id'>
+            //const item: Seguimiento = { ...data, id: d.id } as Seguimiento
             const data = d.data() as Omit<Seguimiento, 'id'>
-            const item: Seguimiento = { ...data, id: d.id } as Seguimiento
+            const item: Seguimiento = {
+              ...data,
+              id: d.id,
+              etiquetas: normalizarEtiquetas((data as any).etiquetas),
+            } as Seguimiento
 
             const pid = item.perfilId
             if (!nuevo[pid]) nuevo[pid] = []
@@ -109,19 +131,28 @@ export const useSeguimientosStore = defineStore('seguimientos', {
       const ahora = Date.now()
 
       const id = crypto.randomUUID()
+      /*const nuevo: Seguimiento = {
+        id,
+        perfilId,
+        createdAt: ahora,
+        updatedAt: ahora,
+        ...datos,
+      }*/
+
       const nuevo: Seguimiento = {
         id,
         perfilId,
         createdAt: ahora,
         updatedAt: ahora,
         ...datos,
+        etiquetas: normalizarEtiquetas((datos as any).etiquetas),
       }
 
       // Optimista
       lista.unshift(nuevo)
 
       // Firestore (mismo id para no romper tu UI)
-      void setDoc(doc(COL, id), nuevo).catch((e) =>
+      void setDoc(doc(COL, id), cleanUndefined(nuevo as any)).catch((e) =>
         console.error('[Firestore][seguimientos] crear error:', e)
       )
 
@@ -140,7 +171,7 @@ export const useSeguimientosStore = defineStore('seguimientos', {
       )
     },
 
-    actualizar(perfilId: string, id: string, patch: PatchSeguimiento) {
+    /*actualizar(perfilId: string, id: string, patch: PatchSeguimiento) {
       this.asegurarPerfil(perfilId)
       const lista = this.porPerfil[perfilId] ?? (this.porPerfil[perfilId] = [])
 
@@ -160,6 +191,44 @@ export const useSeguimientosStore = defineStore('seguimientos', {
 
       // Firestore (no hace falta mandar todo)
       void updateDoc(doc(COL, id), { ...patch, updatedAt: next.updatedAt }).catch((e) =>
+        console.error('[Firestore][seguimientos] actualizar error:', e)
+      )
+    },*/
+    actualizar(perfilId: string, id: string, patch: PatchSeguimiento) {
+      this.asegurarPerfil(perfilId)
+      const lista = this.porPerfil[perfilId] ?? (this.porPerfil[perfilId] = [])
+
+      const idx = lista.findIndex(x => x.id === id)
+      if (idx === -1) return
+      const actual = lista[idx]
+      if (!actual) return
+
+      // 1) limpiamos undefined para que no "machque" valores en local
+      const patchLocal = cleanUndefined({ ...patch }) as PatchSeguimiento
+
+      // 2) si vienen etiquetas, las normalizamos
+      if ('etiquetas' in patchLocal) {
+        patchLocal.etiquetas = normalizarEtiquetas(patchLocal.etiquetas)
+      }
+
+      const updatedAt = Date.now()
+
+      const next: Seguimiento = {
+        ...actual,
+        ...patchLocal,
+        updatedAt,
+      }
+
+      // Optimista
+      lista[idx] = next
+
+      // Firestore (no enviar undefined jamás)
+      const patchFs: any = cleanUndefined({
+        ...patchLocal,
+        updatedAt,
+      })
+
+      void updateDoc(doc(COL, id), patchFs).catch((e) =>
         console.error('[Firestore][seguimientos] actualizar error:', e)
       )
     },

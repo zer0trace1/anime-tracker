@@ -31,6 +31,7 @@ export interface Seguimiento {
   nota?: number // 0-10
   comentario?: string
   imagenUrl?: string
+  etiquetas?: string[]
 
   createdAt: number
   updatedAt: number

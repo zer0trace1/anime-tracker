@@ -5,6 +5,18 @@ import { usePerfilesStore } from '@/stores/perfiles'
 import { useSeguimientosStore } from '@/stores/seguimientos'
 import type { Seguimiento } from '@/types/domain'
 
+function parseEtiquetas(input: string): string[] {
+  return Array.from(
+    new Set(
+      input
+        .split(/[,;\n]+/g)         // separa por coma, ; o salto de línea
+        .map(t => t.trim())
+        .filter(Boolean)
+        .map(t => t.toLowerCase()) // normalizamos a minúsculas
+    )
+  )
+}
+
 const props = defineProps<{
   abierto: boolean
   tipoInicial: TipoContenido
@@ -28,7 +40,10 @@ const form = reactive({
   nota: undefined as number | undefined,
   comentario: '',
   imagenUrl: '',
+  etiquetasTexto: '',
 })
+
+const etiquetasPreview = computed(() => parseEtiquetas(form.etiquetasTexto))
 
 const muestraProgreso = computed(() => form.tipo !== 'pelicula')
 
@@ -57,6 +72,7 @@ watch(
       form.nota = e.nota
       form.comentario = e.comentario ?? ''
       form.imagenUrl = e.imagenUrl ?? ''
+      form.etiquetasTexto = (e.etiquetas ?? []).join(', ')
       return
     }
 
@@ -69,6 +85,7 @@ watch(
     form.nota = undefined
     form.comentario = ''
     form.imagenUrl = ''
+    form.etiquetasTexto = ''
   }
 )
 
@@ -88,6 +105,7 @@ function guardar() {
     nota: form.nota !== undefined && form.nota !== null && form.nota !== ('' as any) ? Number(form.nota) : undefined,
     comentario: form.comentario.trim() || undefined,
     imagenUrl: form.imagenUrl.trim() || undefined,
+    etiquetas: etiquetasPreview.value,
   }
 
   if (props.editar) {
@@ -116,6 +134,18 @@ function guardar() {
             <label class="campo">
               <span>Título</span>
               <input v-model="form.titulo" placeholder="Ej. Fullmetal Alchemist" />
+            </label>
+
+            <label class="campo">
+              <span>Etiquetas (opcional)</span>
+              <input
+                v-model="form.etiquetasTexto"
+                placeholder="Ej. terror, comedia, aventura"
+              />
+
+              <div v-if="etiquetasPreview.length" class="chips">
+                <span v-for="t in etiquetasPreview" :key="t" class="chip">{{ t }}</span>
+              </div>
             </label>
 
             <div class="fila">
@@ -253,6 +283,21 @@ input, select, textarea{
 
 input:focus, select:focus, textarea:focus{
   border-color: rgba(31,42,36,0.20);
+}
+
+.chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.chip{
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(31,42,36,0.12);
+  background: rgba(255,255,255,0.55);
 }
 
 .acciones{

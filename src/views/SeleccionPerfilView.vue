@@ -32,10 +32,6 @@
             </template>
 
             <template v-else>
-              <button class="link" type="button" @click="cambiarAvatar(p.id)">
-                Cambiar avatar
-              </button>
-
               <button class="link" type="button" @click="abrirSelectorFoto(p.id)">
                 Elegir foto
               </button>
@@ -53,7 +49,6 @@
         </div>
       </div>
 
-      <p class="footer">Cozy · Sencilla · Minimalista</p>
       <!-- UBICACION TEMPORAL BOTON LOGOUT -->
       <button class="btnCambio" type="button" @click="logout">
         Cerrar sesión
@@ -88,11 +83,6 @@ const esSoloLectura = (perfilId: string) => perfilId !== perfilPropioId.value
 function entrar(perfilId: string) {
   perfilesStore.seleccionarPerfil(perfilId)
   router.push('/inicio')
-}
-
-function cambiarAvatar(perfilId: string) {
-  if (esSoloLectura(perfilId)) return
-  perfilesStore.cambiarAvatar(perfilId)
 }
 
 async function logout() {
