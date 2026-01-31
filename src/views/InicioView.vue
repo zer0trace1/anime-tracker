@@ -77,12 +77,67 @@ const hayFiltros = computed(() => {
   return busqueda.value.trim().length > 0 || estadoFiltro.value !== 'todos'
 })
 
-const lista = computed(() => {
+/*const lista = computed(() => {
   const q = busqueda.value.trim().toLowerCase()
   let arr = [...listaBase.value]
 
   if (q) {
     arr = arr.filter(x => (x.titulo ?? '').toLowerCase().includes(q))
+  }
+
+  if (estadoFiltro.value !== 'todos') {
+    arr = arr.filter(x => x.estado === estadoFiltro.value)
+  }
+
+  switch (orden.value) {
+    case 'alfabetico':
+      arr.sort((a, b) => (a.titulo ?? '').localeCompare(b.titulo ?? '', 'es', { sensitivity: 'base' }))
+      break
+
+    case 'nota_desc':
+      arr.sort((a, b) => (b.nota ?? -1) - (a.nota ?? -1))
+      break
+
+    case 'progreso_desc': {
+      const score = (x: Seguimiento) => {
+        if (x.tipo === 'pelicula') return -1
+        if (x.progresoTotal && x.progresoTotal > 0) return x.progresoActual / x.progresoTotal
+        return x.progresoActual > 0 ? 0.001 : -1
+      }
+      arr.sort((a, b) => score(b) - score(a))
+      break
+    }
+
+    default:
+      arr.sort((a, b) => (b.updatedAt ?? 0) - (a.updatedAt ?? 0))
+  }
+
+  return arr
+})*/
+const norm = (s: string) =>
+  (s ?? '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+
+const lista = computed(() => {
+  const raw = busqueda.value.trim()
+  const q = norm(raw.startsWith('#') ? raw.slice(1) : raw)
+
+  let arr = [...listaBase.value]
+
+  if (q) {
+    arr = arr.filter(x => {
+      const titulo = norm(x.titulo ?? '')
+      const comentario = norm(x.comentario ?? '')
+      const etiquetas = (x.etiquetas ?? []).map(norm)
+
+      return (
+        titulo.includes(q) ||
+        comentario.includes(q) ||
+        etiquetas.some(t => t.includes(q))
+      )
+    })
   }
 
   if (estadoFiltro.value !== 'todos') {
@@ -252,7 +307,7 @@ function estiloPortada(item: Seguimiento) {
       <div class="controles">
         <label class="campoCtrl">
           <span class="labelCtrl">Buscar</span>
-          <input v-model="busqueda" class="inputCtrl" placeholder="Escribe un título..." />
+          <input v-model="busqueda" class="inputCtrl" placeholder="Busca por título o etiqueta (ej. terror o #terror)..." />
         </label>
 
         <label class="campoCtrl">
@@ -335,7 +390,22 @@ function estiloPortada(item: Seguimiento) {
                 </span>
                 <span v-if="item.nota !== undefined"> · ⭐ {{ item.nota }}</span>
               </div>
+              <div v-if="item.etiquetas?.length" class="tags">
+                <button
+                  v-for="t in item.etiquetas.slice(0, 6)"
+                  :key="t"
+                  class="tag"
+                  type="button"
+                  @click="busqueda = t"
+                  :title="`Filtrar por ${t}`"
+                >
+                  #{{ t }}
+                </button>
 
+                <span v-if="item.etiquetas.length > 6" class="tag tag--more">
+                  +{{ item.etiquetas.length - 6 }}
+                </span>
+              </div>
               <p
                 v-if="item.comentario"
                 class="comentario"
@@ -899,5 +969,29 @@ function estiloPortada(item: Seguimiento) {
   padding: 4px 6px;
 }
 .recomendar:hover{ opacity: 0.90; }
+
+.tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.tag{
+  border: 1px solid rgba(31,42,36,0.10);
+  background: rgba(255,255,255,0.50);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  opacity: 0.82;
+}
+
+.tag:hover{ opacity: 1; }
+
+.tag--more{
+  cursor: default;
+  opacity: 0.65;
+}
 
 </style>

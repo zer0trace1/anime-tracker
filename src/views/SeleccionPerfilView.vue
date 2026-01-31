@@ -49,6 +49,7 @@
         </div>
       </div>
 
+      <p class="footer">Accede y almacena tu contenido favorito ☺️</p>
       <!-- UBICACION TEMPORAL BOTON LOGOUT -->
       <button class="btnCambio" type="button" @click="logout">
         Cerrar sesión
