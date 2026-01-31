@@ -80,7 +80,7 @@ const router = useRouter()
 const perfilesStore = usePerfilesStore()
 const sesion = useSesionStore()
 
-const usuarioNombre = computed(() => sesion.usuarioNombre || '—')
+const usuarioNombre = computed(() => sesion.nombreLogeado || '-')
 const perfilPropioId = computed(() => sesion.perfilPropioId || '')
 
 const esSoloLectura = (perfilId: string) => perfilId !== perfilPropioId.value
