@@ -3,10 +3,6 @@
     <img class="totoro" src="@/assets/decor/totoro-gif.gif" alt="" aria-hidden="true" />
     <div class="contenido">
       <h1 class="titulo">Track Anime</h1>
-      <!-- UBICACION TEMPORAL BOTON LOGOUT -->
-      <button class="btnCambio" type="button" @click="logout">
-        Cerrar sesión
-      </button> 
       <p class="sub">
         Estás logeado como: <strong>{{ usuarioNombre }}</strong>
       </p>
@@ -58,7 +54,10 @@
       </div>
 
       <p class="footer">Cozy · Sencilla · Minimalista</p>
-
+      <!-- UBICACION TEMPORAL BOTON LOGOUT -->
+      <button class="btnCambio" type="button" @click="logout">
+        Cerrar sesión
+      </button>
       <!-- input real para elegir archivo -->
       <input
         ref="inputFoto"
@@ -176,7 +175,7 @@ function fileToDataUrlResized(file: File, maxSide = 256, quality = 0.85): Promis
   position: fixed;
   left: -180px;
   bottom: 16px;
-  width: 140px;
+  width: 400px;
   height: auto;
   opacity: 0.9;
   pointer-events: none;
@@ -186,12 +185,19 @@ function fileToDataUrlResized(file: File, maxSide = 256, quality = 0.85): Promis
 }
 
 @keyframes totoro-walk{
-  0% { transform: translateX(calc(100vw + 360px)); }
+  0% { transform: translateX(calc(100vw + 400px)); }
   100%   { transform: translateX(0); }
 }
 
 @media (prefers-reduced-motion: reduce){
   .totoro{ animation: none; left: 16px; }
+}
+.btnCambio{
+  border-radius: 999px;
+  padding: 10px 12px;
+  border: 1px solid rgba(31,42,36,0.12);
+  background: rgba(255,255,255,0.55);
+  cursor: pointer;
 }
 .contenido {
   width: min(920px, 100%);
