@@ -18,7 +18,7 @@ export function iniciarSyncFirebase() {
   })
 }*/
 
-/* src/services/syncFirebase.ts
+// src/services/syncFirebase.ts
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from '@/services/firebase'
 import { useSeguimientosStore } from '@/stores/seguimientos'
@@ -38,9 +38,9 @@ export function iniciarSyncFirebase() {
       rec.conectarFirebase()
     }
   })
-}*/
+}
 
-// src/services/syncFirebase.ts
+/* src/services/syncFirebase.ts
 import { onIdTokenChanged } from 'firebase/auth'
 import { auth } from '@/services/firebase'
 import { useSeguimientosStore } from '@/stores/seguimientos'
@@ -66,4 +66,4 @@ export function iniciarSyncFirebase() {
       rec.desconectarFirebase()
     }
   })
-}
+}*/

@@ -4,6 +4,8 @@ import { cargarJSON, guardarJSON } from '@/services/storage'
 import { usePerfilesStore } from '@/stores/perfiles'
 import { auth } from '@/services/firebase'
 
+import type { FirestoreError } from 'firebase/firestore'
+
 import {
   collection,
   deleteDoc,
@@ -25,6 +27,10 @@ const KEY = 'track-anime:recomendaciones:v1'
 const COL = collection(db, 'pareja', 'anime-tracker', 'recomendaciones')
 
 let off: Unsubscribe | null = null
+
+function isPermDenied(e: unknown) {
+  return (e as FirestoreError)?.code === 'permission-denied'
+}
 
 export const useRecomendacionesStore = defineStore('recomendaciones', {
   state: (): EstadoRecs => cargarJSON(KEY, { porDestino: {} }),
@@ -68,6 +74,10 @@ export const useRecomendacionesStore = defineStore('recomendaciones', {
           this.porDestino = nuevo
         },
         (err) => {
+          if (isPermDenied(err)) {
+            this.desconectarFirebase()
+            return
+          }
           console.error('[Firestore][recomendaciones] onSnapshot error:', err)
         }
       )
