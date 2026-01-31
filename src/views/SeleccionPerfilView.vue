@@ -186,8 +186,8 @@ function fileToDataUrlResized(file: File, maxSide = 256, quality = 0.85): Promis
 }
 
 @keyframes totoro-walk{
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(calc(100vw + 360px)); }
+  0% { transform: translateX(calc(100vw + 360px)); }
+  100%   { transform: translateX(0); }
 }
 
 @media (prefers-reduced-motion: reduce){
