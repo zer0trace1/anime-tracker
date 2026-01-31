@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import type { Seguimiento, TipoContenido } from '@/types/domain'
 import { cargarJSON, guardarJSON } from '@/services/storage'
 import { usePerfilesStore } from '@/stores/perfiles'
+import { auth } from '@/services/firebase'
 
 import {
   collection,
@@ -53,7 +54,7 @@ export const useSeguimientosStore = defineStore('seguimientos', {
     // --- Firebase realtime ---
     conectarFirebase() {
       if (off) return
-
+      if (!auth.currentUser) return
       const q = query(COL, orderBy('updatedAt', 'desc'))
       off = onSnapshot(
         q,
