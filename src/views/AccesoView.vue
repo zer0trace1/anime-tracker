@@ -3,19 +3,20 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { auth } from '@/services/firebase'
+import { useToastsStore } from '@/stores/toasts'
 
 const router = useRouter()
 const email = ref('')
 const password = ref('')
-const error = ref('')
+const toasts = useToastsStore()
 
 async function entrar() {
-  error.value = ''
   try {
     await signInWithEmailAndPassword(auth, email.value.trim(), password.value)
+    toasts.success('Sesión iniciada ✅')
     router.push('/') // a tu landing de perfiles
   } catch (e: any) {
-    error.value = 'No se pudo iniciar sesión. Revisa email y contraseña.'
+    toasts.error('No se pudo iniciar sesión. Revisa email y contraseña.')
   }
 }
 </script>
@@ -35,8 +36,6 @@ async function entrar() {
         <span>Contraseña</span>
         <input v-model="password" type="password" autocomplete="current-password" />
       </label>
-
-      <p v-if="error" class="err">{{ error }}</p>
 
       <button class="btn" type="button" @click="entrar">Entrar</button>
     </div>

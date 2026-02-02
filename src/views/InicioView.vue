@@ -11,6 +11,7 @@ import { useRecomendacionesStore } from '@/stores/recomendaciones'
 import ModalRecomendar from '@/components/ModalRecomendar.vue'
 import ModalRecomendaciones from '@/components/ModalRecomendaciones.vue'
 import ModalDetalleSeguimiento from '@/components/ModalDetalleSeguimiento.vue'
+import { useToastsStore } from '@/stores/toasts'
 
 const router = useRouter()
 const perfiles = usePerfilesStore()
@@ -18,6 +19,7 @@ const seguimientos = useSeguimientosStore()
 const sesion = useSesionStore()
 const modalDetalleAbierto = ref(false)
 const itemDetalle = ref<Seguimiento | null>(null)
+const toasts = useToastsStore()
 
 const seccion = ref<TipoContenido>('anime')
 
@@ -203,6 +205,7 @@ const stats = computed(() => {
 
 async function logout() {
   await sesion.logout()
+  toasts.info('Sesión cerrada')
   router.push('/acceso') // o { name: 'acceso' } si tienes ruta con name
 }
 
@@ -226,6 +229,7 @@ function cerrarModal() {
 function eliminar(item: Seguimiento) {
   if (!puedeEditar.value) return
   seguimientos.eliminar(perfiles.perfilActivoId, item.id)
+  toasts.info('Eliminado')
 }
 
 function ajustar(item: Seguimiento, delta: number) {

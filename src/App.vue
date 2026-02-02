@@ -1,9 +1,14 @@
+<script setup lang="ts">
+import Toasts from '@/components/Toasts.vue'
+</script>
+
 <template>
   <RouterView v-slot="{ Component, route }">
     <Transition name="suave">
       <component :is="Component" :key="route.fullPath" />
     </Transition>
   </RouterView>
+  <Toasts />
 </template>
 
 <style>

@@ -71,10 +71,12 @@ import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { usePerfilesStore } from '@/stores/perfiles'
 import { useSesionStore } from '@/stores/sesion'
+import { useToastsStore } from '@/stores/toasts'
 
 const router = useRouter()
 const perfilesStore = usePerfilesStore()
 const sesion = useSesionStore()
+const toasts = useToastsStore()
 
 const usuarioNombre = computed(() => sesion.nombreLogeado || '-')
 const perfilPropioId = computed(() => sesion.perfilPropioId || '')
@@ -88,6 +90,7 @@ function entrar(perfilId: string) {
 
 async function logout() {
   await sesion.logout()
+  toasts.info('Sesión cerrada')
   router.push('/acceso')
 }
 

@@ -4,6 +4,9 @@ import type { EstadoSeguimiento, TipoContenido } from '@/types/domain'
 import { usePerfilesStore } from '@/stores/perfiles'
 import { useSeguimientosStore } from '@/stores/seguimientos'
 import type { Seguimiento } from '@/types/domain'
+import { useToastsStore } from '@/stores/toasts'
+
+const toasts = useToastsStore()
 
 function parseEtiquetas(input: string): string[] {
   return Array.from(
@@ -110,8 +113,10 @@ function guardar() {
 
   if (props.editar) {
     seguimientos.actualizar(perfilId, props.editar.id, payload)
+    toasts.success('Cambios guardados')
   } else {
     seguimientos.crear(perfilId, payload)
+    toasts.success('Añadido a tu lista ✅')
   }
 
   emit('guardado')

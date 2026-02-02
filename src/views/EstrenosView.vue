@@ -7,11 +7,13 @@ import { useEstrenosStore } from '@/stores/estrenos'
 import { resolverAvatar } from '@/assets/avatares'
 import type { TipoContenido, Estreno } from '@/types/domain'
 import ModalEstreno from '@/components/ModalEstreno.vue'
+import { useToastsStore } from '@/stores/toasts'
 
 const router = useRouter()
 const perfiles = usePerfilesStore()
 const sesion = useSesionStore()
 const estrenos = useEstrenosStore()
+const toasts = useToastsStore()
 
 // --- Modo lectura (igual que en InicioView) ---
 const modoLectura = computed(() => {
@@ -133,6 +135,7 @@ const nombresTipo: Record<TipoContenido, string> = {
 // --- Navegación / acciones ---
 async function logout() {
   await sesion.logout()
+  toasts.info('Sesión cerrada')
   router.push('/acceso')
 }
 
