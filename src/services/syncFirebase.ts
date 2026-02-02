@@ -23,19 +23,23 @@ import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from '@/services/firebase'
 import { useSeguimientosStore } from '@/stores/seguimientos'
 import { useRecomendacionesStore } from '@/stores/recomendaciones'
+import { useEstrenosStore } from '@/stores/estrenos'
 
 export function iniciarSyncFirebase() {
   const seg = useSeguimientosStore()
   const rec = useRecomendacionesStore()
+  const estrenos = useEstrenosStore()
 
   onAuthStateChanged(auth, (user) => {
     // 👇 siempre limpia primero
     seg.desconectarFirebase()
     rec.desconectarFirebase()
-
+    estrenos.desconectarFirebase()
+    
     if (user) {
       seg.conectarFirebase()
       rec.conectarFirebase()
+      estrenos.conectarFirebase()
     }
   })
 }

@@ -4,6 +4,7 @@ import InicioView from '@/views/InicioView.vue'
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from '@/services/firebase'
 import AccesoView from '@/views/AccesoView.vue'
+import EstrenosView from '@/views/EstrenosView.vue'
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -11,6 +12,7 @@ const router = createRouter({
     { path: '/acceso', component: AccesoView },
     { path: '/', name: 'seleccion-perfil', component: SeleccionPerfilView },
     { path: '/inicio', name: 'inicio', component: InicioView },
+    { path: '/estrenos', component: EstrenosView },
   ],
 })
 

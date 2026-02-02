@@ -56,3 +56,16 @@ export interface Recomendacion {
   origenSeguimientoId?: string
 }
 
+export type Estreno = {
+  id: string
+  perfilId: string
+  tipo: TipoContenido
+  titulo: string
+  fechaEstreno: number // ms timestamp
+  comentario?: string
+  imagenUrl?: string
+  etiquetas?: string[]
+  createdAt: number
+  updatedAt: number
+}
+

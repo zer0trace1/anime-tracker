@@ -299,6 +299,10 @@ function estiloPortada(item: Seguimiento) {
         <button class="btnCambio" type="button" @click="logout">
           Cerrar sesión
         </button>
+
+        <button class="btnCambio" type="button" @click="router.push('/estrenos')">
+          Estrenos
+        </button>
       </div>
     </header>
 
