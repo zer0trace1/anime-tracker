@@ -114,6 +114,9 @@ const updated = computed(() => {
                   <div class="label">Última actualización</div>
                   <div class="value">{{ updated }}</div>
                 </div>
+                <a v-if="item.urlInteres" class="btnLink" :href="item.urlInteres" target="_blank" rel="noopener noreferrer">
+                  Abrir URL de interés
+                </a>
               </div>
             </div>
 

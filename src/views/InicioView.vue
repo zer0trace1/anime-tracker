@@ -457,6 +457,17 @@ function estiloPortada(item: Seguimiento) {
               >
                 ✨
               </button>
+              <a
+                v-if="item.urlInteres"
+                class="verLink"
+                :href="item.urlInteres"
+                target="_blank"
+                rel="noopener noreferrer"
+                @click.stop
+                title="Abrir enlace"
+              >
+                🔗
+              </a>
               <button v-if="puedeEditar" class="editar" type="button" @click.stop="editar(item)" aria-label="Editar">✎</button>
               <button v-if="puedeEditar" class="borrar" type="button" @click.stop="eliminar(item)" aria-label="Eliminar">✕</button>
             </div>
@@ -1025,5 +1036,11 @@ function estiloPortada(item: Seguimiento) {
   cursor: default;
   opacity: 0.65;
 }
-
+.verLink{
+  text-decoration: none;
+  opacity: 0.6;
+  padding: 4px 6px;
+  border-radius: 10px;
+}
+.verLink:hover{ opacity: 0.9; }
 </style>

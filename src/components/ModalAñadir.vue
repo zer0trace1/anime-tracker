@@ -44,6 +44,7 @@ const form = reactive({
   comentario: '',
   imagenUrl: '',
   etiquetasTexto: '',
+  urlInteres: '',
 })
 
 const etiquetasPreview = computed(() => parseEtiquetas(form.etiquetasTexto))
@@ -76,6 +77,7 @@ watch(
       form.comentario = e.comentario ?? ''
       form.imagenUrl = e.imagenUrl ?? ''
       form.etiquetasTexto = (e.etiquetas ?? []).join(', ')
+      form.urlInteres = e.urlInteres ?? ''
       return
     }
 
@@ -89,6 +91,7 @@ watch(
     form.comentario = ''
     form.imagenUrl = ''
     form.etiquetasTexto = ''
+    form.urlInteres = ''
   }
 )
 
@@ -109,6 +112,7 @@ function guardar() {
     comentario: form.comentario.trim() || undefined,
     imagenUrl: form.imagenUrl.trim() || undefined,
     etiquetas: etiquetasPreview.value,
+    urlInteres: form.urlInteres.trim() || undefined,
   }
 
   if (props.editar) {
@@ -189,6 +193,17 @@ function guardar() {
               </label>
             </div>
 
+            <!--<div class="fila">
+              <label class="campo">
+                <span>Nota (0-10, opcional)</span>
+                <input type="number" min="0" max="10" step="0.5" v-model.number="form.nota" />
+              </label>
+
+              <label class="campo">
+                <span>URL de imagen (opcional)</span>
+                <input v-model="form.imagenUrl" placeholder="https://..." />
+              </label>
+            </div>-->
             <div class="fila">
               <label class="campo">
                 <span>Nota (0-10, opcional)</span>
@@ -200,6 +215,11 @@ function guardar() {
                 <input v-model="form.imagenUrl" placeholder="https://..." />
               </label>
             </div>
+
+            <label class="campo">
+              <span>URL de interés (opcional)</span>
+              <input v-model="form.urlInteres" placeholder="Ej. https://..." />
+            </label>
 
             <label class="campo">
               <span>Comentario (opcional)</span>

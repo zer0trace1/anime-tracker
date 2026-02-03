@@ -26,7 +26,7 @@ type EstadoSeguimientos = {
 type PatchSeguimiento = Partial<
   Pick<
     Seguimiento,
-    'tipo' | 'titulo' | 'estado' | 'progresoActual' | 'progresoTotal' | 'nota' | 'comentario' | 'imagenUrl' | 'etiquetas'
+    'tipo' | 'titulo' | 'estado' | 'progresoActual' | 'progresoTotal' | 'nota' | 'comentario' | 'imagenUrl' | 'etiquetas' | 'urlInteres'
   >
 >
 

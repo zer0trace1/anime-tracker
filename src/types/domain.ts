@@ -32,6 +32,7 @@ export interface Seguimiento {
   comentario?: string
   imagenUrl?: string
   etiquetas?: string[]
+  urlInteres?: string
 
   createdAt: number
   updatedAt: number
