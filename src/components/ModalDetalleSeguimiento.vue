@@ -310,4 +310,10 @@ const updated = computed(() => {
   .portada{ width: 100%; height: 220px; }
   .linea{ grid-template-columns: 1fr; }
 }
+
+.btnLink{
+  font-size: 12.5px;
+  opacity: 0.72;
+  color:rgba(9, 141, 218, 0.34)
+}
 </style>

@@ -468,8 +468,8 @@ function estiloPortada(item: Seguimiento) {
               >
                 🔗
               </a>
-              <button v-if="puedeEditar" class="editar" type="button" @click.stop="editar(item)" aria-label="Editar">✎</button>
-              <button v-if="puedeEditar" class="borrar" type="button" @click.stop="eliminar(item)" aria-label="Eliminar">✕</button>
+              <button v-if="puedeEditar" class="editar" type="button" @click.stop="editar(item)" aria-label="Editar" title="Editar">✎</button>
+              <button v-if="puedeEditar" class="borrar" type="button" @click.stop="eliminar(item)" aria-label="Eliminar" title="Eliminar">✕</button>
             </div>
           </div>
         </article>
