@@ -3,6 +3,7 @@
     <img class="totoro" src="@/assets/decor/totoro-gif.gif" alt="" aria-hidden="true" />
     <div class="contenido">
       <h1 class="titulo">Track Anime</h1>
+      <img class="logo" :src="logo" alt="Gyoza" />
       <p class="sub">
         Estás logeado como: <strong>{{ usuarioNombre }}</strong>
       </p>
@@ -72,6 +73,7 @@ import { useRouter } from 'vue-router'
 import { usePerfilesStore } from '@/stores/perfiles'
 import { useSesionStore } from '@/stores/sesion'
 import { useToastsStore } from '@/stores/toasts'
+import logo from '@/assets/gyoza-logo.png'
 
 const router = useRouter()
 const perfilesStore = usePerfilesStore()
@@ -300,4 +302,11 @@ function fileToDataUrlResized(file: File, maxSide = 256, quality = 0.85): Promis
   opacity: 0.6;
 }
 .hidden { display: none; }
+.logo{
+  height: 54px;     /* cambia este número si lo quieres más grande/pequeño */
+  width: auto;
+  display: block;
+  margin: 0 auto 8px;
+  filter: drop-shadow(0 10px 24px rgba(0,0,0,0.08));
+}
 </style>
