@@ -314,6 +314,7 @@ const updated = computed(() => {
 .btnLink{
   font-size: 12.5px;
   opacity: 0.72;
-  color:rgba(9, 141, 218, 0.34)
+  color:rgba(37, 167, 243, 0.966);
+  font-weight: bold;
 }
 </style>
