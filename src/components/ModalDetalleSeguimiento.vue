@@ -150,22 +150,31 @@ const updated = computed(() => {
 .fondo{
   position: fixed;
   inset: 0;
-  background: rgba(20, 24, 22, 0.34);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding: 18px;
-  z-index: 60;
+  background: rgba(20, 24, 22, 0.30);
+
+  /* clave: que el fondo sea scrollable */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+
+  /* mejor para móvil: arriba y con padding */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  padding: 16px 12px;
+  z-index: 1000; /* por encima del botón flotante */
+  overscroll-behavior: contain;
 }
 
 .modal{
-  width: min(860px, 100%);
+  width: min(720px, 100%);
+  max-height: calc(100dvh - 32px); /* dvh = viewport real en móvil */
+  overflow: hidden;                /* el scroll lo llevará .contenido */
   border-radius: 22px;
   border: 1px solid rgba(31,42,36,0.12);
-  background: rgba(255,255,255,0.78);
+  background: rgba(255,255,255,0.72);
   box-shadow: 0 24px 70px rgba(0,0,0,0.18);
   backdrop-filter: blur(10px);
-  overflow: hidden;
 }
 
 .cabecera{
@@ -220,9 +229,13 @@ const updated = computed(() => {
 }
 
 .contenido{
-  padding: 16px;
-  display:grid;
-  gap: 14px;
+  padding: 14px 16px 16px;
+  display: grid;
+  gap: 12px;
+
+  overflow: auto; /* <- clave */
+  max-height: calc(100dvh - 120px); /* ajusta según tu header/botones */
+  -webkit-overflow-scrolling: touch;
 }
 
 .gridTop{

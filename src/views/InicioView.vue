@@ -1079,9 +1079,9 @@ function estiloPortada(item: Seguimiento) {
 
 .fabAñadir{
   position: fixed;
-  right: 16px;
+  right: 20px;
   bottom: calc(16px + env(safe-area-inset-bottom));
-  z-index: 60;
+  z-index: 50;
 }
 
 @media (max-width: 720px){
