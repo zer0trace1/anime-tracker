@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { usePerfilesStore } from '@/stores/perfiles'
 import { useSeguimientosStore } from '@/stores/seguimientos'
@@ -214,6 +214,45 @@ function abrirAñadir() {
   itemEditando.value = null
   modalAbierto.value = true
 }
+
+function esCampoDeTexto(target: EventTarget | null) {
+  const el = target as HTMLElement | null
+  if (!el) return false
+
+  const tag = el.tagName?.toLowerCase()
+  if (tag === 'input' || tag === 'textarea' || tag === 'select') return true
+  if (el.isContentEditable) return true
+
+  return false
+}
+
+function onKeydown(e: KeyboardEvent) {
+  // No interferir con atajos del navegador o del sistema
+  if (e.ctrlKey || e.metaKey || e.altKey) return
+
+  // Si estás escribiendo, no hacer nada
+  if (esCampoDeTexto(e.target)) return
+
+  // Solo si puedes editar (no modo lectura)
+  if (!puedeEditar.value) return
+
+  // No abrir si ya está abierto
+  if (modalAbierto.value) return
+
+  // Tecla A
+  if (e.key.toLowerCase() === 'a') {
+    e.preventDefault()
+    abrirAñadir()
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('keydown', onKeydown)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', onKeydown)
+})
 
 function editar(item: Seguimiento) {
   if (!puedeEditar.value) return
