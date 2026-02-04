@@ -494,7 +494,7 @@ function estiloPortada(item: Seguimiento) {
       </div>
 
       <!-- Botón debajo (solo si ya hay items en la sección) -->
-      <div v-if="listaBase.length && puedeEditar" class="barraAñadir">
+      <div v-if="listaBase.length && puedeEditar" class="fabAñadir">
         <button class="btnAñadir" type="button" @click="abrirAñadir" aria-label="Añadir">
           <span class="plus" aria-hidden="true">
             <span class="v"></span>
@@ -539,7 +539,7 @@ function estiloPortada(item: Seguimiento) {
 .contenedor{
   max-width: 980px;
   margin: 0 auto;
-  padding: 22px 18px 60px;
+  padding: 22px 18px 110px;
 }
 
 .top{
@@ -859,12 +859,6 @@ function estiloPortada(item: Seguimiento) {
   cursor: pointer;
 }
 
-.barraAñadir{
-  margin-top: 14px;
-  display:flex;
-  justify-content:center;
-}
-
 .btnAñadir{
   display:flex;
   align-items:center;
@@ -1043,4 +1037,18 @@ function estiloPortada(item: Seguimiento) {
   border-radius: 10px;
 }
 .verLink:hover{ opacity: 0.9; }
+.fabAñadir{
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 60;
+}
+
+/* En móvil, un pelín más cerca del borde */
+@media (max-width: 720px){
+  .fabAñadir{
+    right: 14px;
+    bottom: 14px;
+  }
+}
 </style>
