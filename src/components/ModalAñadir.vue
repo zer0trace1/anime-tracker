@@ -245,38 +245,79 @@ function guardar() {
   position: fixed;
   inset: 0;
   background: rgba(20, 24, 22, 0.30);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding: 16px;
+  z-index: 50;
 
-  /* clave: que el fondo sea scrollable */
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-
-  /* mejor para móvil: arriba y con padding */
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-
-  padding: 16px 12px;
-  z-index: 1000; /* por encima del botón flotante */
-  overscroll-behavior: contain;
+  /* por si algún modal es más alto que la pantalla */
+  overflow: auto;
 }
 
 .modal{
   width: min(720px, 100%);
-  max-height: calc(100dvh - 32px); /* dvh = viewport real en móvil */
-  overflow: hidden;                /* el scroll lo llevará .contenido */
   border-radius: 22px;
   border: 1px solid rgba(31,42,36,0.12);
   background: rgba(255,255,255,0.72);
   box-shadow: 0 24px 70px rgba(0,0,0,0.18);
   backdrop-filter: blur(10px);
+
+  /* 🔥 CLAVE: limitar altura y hacer layout en columna */
+  max-height: calc(100dvh - 32px);
+  display: flex;
+  flex-direction: column;
+
+  /* ya NO conviene cortar todo, el scroll va dentro */
+  overflow: hidden;
 }
 
 .cabecera{
+  flex: 0 0 auto;
   display:flex;
   align-items:center;
   justify-content:space-between;
   padding: 14px 16px;
   border-bottom: 1px solid rgba(31,42,36,0.10);
+}
+
+.contenido{
+  /* 🔥 CLAVE: aquí vive el scroll */
+  flex: 1 1 auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+
+  padding: 14px 16px 16px;
+  display:grid;
+  gap: 12px;
+}
+
+/* 🔥 Pie bonito, sin rectángulo raro, y botones a la derecha */
+.acciones{
+  position: sticky;
+  bottom: 0;
+
+  display:flex;
+  justify-content:flex-end;
+  gap: 10px;
+
+  /* “saca” el fondo a ancho completo del modal */
+  margin: 12px -16px -16px;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+
+  border-top: 1px solid rgba(31,42,36,0.10);
+  background: rgba(255,255,255,0.72);
+  backdrop-filter: blur(10px);
+}
+
+@media (max-width: 640px){
+  .modal{
+    width: 100%;
+    border-radius: 18px;
+    max-height: calc(100dvh - 24px);
+  }
+  .fila{ grid-template-columns: 1fr; }
 }
 
 .cabecera h3{ margin: 0; font-size: 16px; letter-spacing: 0.2px; }
@@ -286,16 +327,6 @@ function guardar() {
   cursor: pointer;
   font-size: 16px;
   opacity: 0.75;
-}
-
-.contenido{
-  padding: 14px 16px 16px;
-  display: grid;
-  gap: 12px;
-
-  overflow: auto; /* <- clave */
-  max-height: calc(100dvh - 120px); /* ajusta según tu header/botones */
-  -webkit-overflow-scrolling: touch;
 }
 
 .fila{
@@ -338,14 +369,6 @@ input:focus, select:focus, textarea:focus{
   background: rgba(255,255,255,0.55);
 }
 
-.acciones{
-  position: sticky;
-  bottom: 0;
-  padding-top: 10px;
-  background: rgba(255,255,255,0.72);
-  backdrop-filter: blur(8px);
-}
-
 .btnPri, .btnSec{
   border-radius: 999px;
   padding: 10px 14px;
@@ -360,9 +383,5 @@ input:focus, select:focus, textarea:focus{
 
 .btnSec{
   background: rgba(255,255,255,0.65);
-}
-
-@media (max-width: 640px){
-  .fila{ grid-template-columns: 1fr; }
 }
 </style>
