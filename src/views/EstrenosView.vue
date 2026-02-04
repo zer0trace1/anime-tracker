@@ -591,4 +591,82 @@ function eliminar(item: Estreno) {
   .grid{ grid-template-columns: 1fr; }
   .controles{ grid-template-columns: 1fr; }
 }
+
+@media (max-width: 640px){
+
+  .contenedor{
+    padding: 14px 12px 90px;
+  }
+
+  .top{
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .perfil{
+    align-items: flex-start;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .avatar{
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+  }
+
+  .logeado{
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .accionesTop{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .btnCambio{
+    width: 100%;
+    justify-content: center;
+    padding: 10px 12px;
+    white-space: nowrap;
+  }
+
+  .controles{
+    grid-template-columns: 1fr;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  .btnLimpiar{
+    width: 100%;
+  }
+
+  .grid{
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .filaCard{
+    padding: 10px;
+    gap: 10px;
+  }
+
+  /* Botones más tocables */
+  .editar, .borrar{
+    padding: 8px 8px;
+    font-size: 16px;
+  }
+}
+
+.perfil{ min-width: 0; }
+.left{ min-width: 0; }
+.titulo{ max-width: 100%; }
 </style>

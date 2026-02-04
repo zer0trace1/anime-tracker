@@ -1076,18 +1076,157 @@ function estiloPortada(item: Seguimiento) {
   border-radius: 10px;
 }
 .verLink:hover{ opacity: 0.9; }
+
 .fabAñadir{
   position: fixed;
-  right: 22px;
-  bottom: 22px;
+  right: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom));
   z-index: 60;
 }
 
-/* En móvil, un pelín más cerca del borde */
 @media (max-width: 720px){
   .fabAñadir{
     right: 14px;
-    bottom: 14px;
+    bottom: calc(14px + env(safe-area-inset-bottom));
+  }
+}
+
+@media (max-width: 640px){
+
+  .contenedor{
+    padding: 14px 12px 100px; /* deja hueco para el botón flotante */
+  }
+
+  /* Header apilado */
+  .top{
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .perfil{
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .perfil{ min-width: 0; }
+  .saludo{ min-width: 0; }
+  .hola, .sub, .logeado{
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  @media (max-width: 640px){
+    .logeado{ white-space: nowrap; }
+  }
+
+  @media (max-width: 640px){
+    .tabs{
+      display: flex;
+      flex-wrap: nowrap;
+    }
+  }
+
+  .avatar{
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+  }
+
+  .logeado{ font-size: 12px; }
+  .hola{ font-size: 16px; }
+  .sub{ font-size: 12.5px; }
+
+  /* Botones del header en grid 2x2 (evita desbordes) */
+  .accionesTop{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    align-items: stretch;
+  }
+
+  .btnRecs, .btnCambio{
+    width: 100%;
+    justify-content: center;
+    padding: 10px 12px;
+  }
+
+  /* Tabs en scroll horizontal */
+  .tabs{
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    max-width: 100%;
+  }
+  .tabs::-webkit-scrollbar{ display:none; }
+
+  .tab{
+    white-space: nowrap;
+    flex: 0 0 auto;
+  }
+
+  /* Controles en columna */
+  .controles{
+    grid-template-columns: 1fr;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  .btnLimpiar{
+    width: 100%;
+  }
+
+  /* Chips (En progreso / Pendiente / Terminado) que no revienten */
+  .stats{
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+  .stats::-webkit-scrollbar{ display:none; }
+  .chip{ white-space: nowrap; }
+
+  /* Grid de cards a 1 columna */
+  .grid{
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .filaCard{
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .portada{
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+  }
+
+  /* Meta en varias líneas, más legible */
+  .meta{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    line-height: 1.3;
+  }
+
+  /* Botones de acciones más “tocables” */
+  .editar, .borrar, .recomendar{
+    padding: 8px 8px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 640px){
+  .accionesTop{
+    width: 100%;
+  }
+  .btnRecs, .btnCambio{
+    min-width: 0;
+    white-space: nowrap;
   }
 }
 </style>
