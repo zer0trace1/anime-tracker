@@ -64,6 +64,11 @@ const modoLectura = computed(() => {
 
 const puedeEditar = computed(() => !modoLectura.value)
 
+function togglePin(item: Seguimiento) {
+  if (!puedeEditar.value) return
+  seguimientos.actualizar(perfiles.perfilActivoId, item.id, { pinned: !item.pinned })
+}
+
 function abrirDetalle(item: Seguimiento) {
   itemDetalle.value = item
   modalDetalleAbierto.value = true
@@ -181,8 +186,9 @@ const lista = computed(() => {
     default:
       arr.sort((a, b) => (b.updatedAt ?? 0) - (a.updatedAt ?? 0))
   }
-
-  return arr
+  const pinned = arr.filter(x => !!x.pinned)
+  const normal = arr.filter(x => !x.pinned)
+  return [...pinned, ...normal]
 })
 
 const contadorTexto = computed(() => {
@@ -409,7 +415,7 @@ function estiloPortada(item: Seguimiento) {
       <!-- Lista -->
       <TransitionGroup v-if="lista.length" name="cards" tag="div" class="grid">
         <!--<article v-for="item in lista" :key="item.id" class="card">-->
-        <article v-for="item in lista" :key="item.id" class="card" @click="abrirDetalle(item)">
+        <article v-for="item in lista" :key="item.id" class="card" :class="{ pinned: !!item.pinned }" @click="abrirDetalle(item)">
           <div class="filaCard">
             <div class="portada" :style="estiloPortada(item)" :class="{ conImagen: !!item.imagenUrl }">
               <img v-if="item.imagenUrl" :src="item.imagenUrl" alt="" />
@@ -509,6 +515,16 @@ function estiloPortada(item: Seguimiento) {
               </a>
               <button v-if="puedeEditar" class="editar" type="button" @click.stop="editar(item)" aria-label="Editar" title="Editar">✎</button>
               <button v-if="puedeEditar" class="borrar" type="button" @click.stop="eliminar(item)" aria-label="Eliminar" title="Eliminar">✕</button>
+              <button
+                v-if="puedeEditar"
+                class="pin"
+                type="button"
+                @click.stop="togglePin(item)"
+                :title="item.pinned ? 'Quitar pin' : 'Pinear'"
+                aria-label="Pin"
+              >
+                📌
+              </button>
             </div>
           </div>
         </article>
@@ -1228,5 +1244,19 @@ function estiloPortada(item: Seguimiento) {
     min-width: 0;
     white-space: nowrap;
   }
+}
+.pin{
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  opacity: 0.55;
+  font-size: 14px;
+  padding: 4px 6px;
+}
+.pin:hover{ opacity: 0.9; }
+
+/* opcional: estado activo */
+.card.pinned{
+  outline: 2px solid rgba(31,42,36,0.18);
 }
 </style>

@@ -33,7 +33,7 @@ export interface Seguimiento {
   imagenUrl?: string
   etiquetas?: string[]
   urlInteres?: string
-
+  pinned?: boolean
   createdAt: number
   updatedAt: number
 }

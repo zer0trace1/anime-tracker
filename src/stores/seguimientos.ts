@@ -26,7 +26,7 @@ type EstadoSeguimientos = {
 type PatchSeguimiento = Partial<
   Pick<
     Seguimiento,
-    'tipo' | 'titulo' | 'estado' | 'progresoActual' | 'progresoTotal' | 'nota' | 'comentario' | 'imagenUrl' | 'etiquetas' | 'urlInteres'
+    'tipo' | 'titulo' | 'estado' | 'progresoActual' | 'progresoTotal' | 'nota' | 'comentario' | 'imagenUrl' | 'etiquetas' | 'urlInteres' | 'pinned'
   >
 >
 
@@ -91,6 +91,7 @@ export const useSeguimientosStore = defineStore('seguimientos', {
               ...data,
               id: d.id,
               etiquetas: normalizarEtiquetas((data as any).etiquetas),
+              pinned: !!(data as any).pinned,
             } as Seguimiento
 
             const pid = item.perfilId
@@ -146,6 +147,7 @@ export const useSeguimientosStore = defineStore('seguimientos', {
         updatedAt: ahora,
         ...datos,
         etiquetas: normalizarEtiquetas((datos as any).etiquetas),
+        pinned: false,
       }
 
       // Optimista
