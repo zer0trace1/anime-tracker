@@ -293,7 +293,6 @@ function guardar() {
   gap: 12px;
 }
 
-/* 🔥 Pie bonito, sin rectángulo raro, y botones a la derecha */
 .acciones{
   position: sticky;
   bottom: 0;
@@ -302,12 +301,19 @@ function guardar() {
   justify-content:flex-end;
   gap: 10px;
 
-  /* “saca” el fondo a ancho completo del modal */
-  margin: 12px -16px -16px;
-  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  /* ancho completo del modal */
+  margin: 0 -16px -16px;
+  padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
 
   border-top: 1px solid rgba(31,42,36,0.10);
-  background: rgba(255,255,255,0.72);
+
+  /* ✅ adiós rectángulo: fade + blur */
+  background: linear-gradient(
+    to top,
+    rgba(255,255,255,0.82) 0%,
+    rgba(255,255,255,0.72) 60%,
+    rgba(255,255,255,0) 100%
+  );
   backdrop-filter: blur(10px);
 }
 
