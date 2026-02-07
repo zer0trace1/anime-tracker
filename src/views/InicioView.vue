@@ -615,28 +615,15 @@ function estiloPortada(item: Seguimiento) {
   width: 52px;
   height: 52px;
   border-radius: 16px;
-  border: 1px solid rgba(31,42,36,0.10);
-  background: rgba(255,255,255,0.45);
+  border: 1px solid rgba(0,245,255,0.22);
+  background: rgba(14, 16, 32, 0.55);
   object-fit: cover;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.40);
 }
 
 .logeado{
   font-size: 12.5px;
-  opacity: 0.72;
-}
-
-.tagLectura{
-  margin-top: 6px;
-  display: inline-flex;
-  align-items: center;
-  width: fit-content;
-  gap: 8px;
-  font-size: 12px;
-  opacity: 0.86;
-  padding: 6px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(31,42,36,0.12);
-  background: rgba(230, 170, 60, 0.12);
+  opacity: 0.78;
 }
 
 .hola{
@@ -650,39 +637,111 @@ function estiloPortada(item: Seguimiento) {
   opacity: 0.72;
 }
 
-.btnCambio{
+.tagLectura{
+  margin-top: 6px;
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  gap: 8px;
+  font-size: 12px;
+  opacity: 0.92;
+  padding: 6px 10px;
   border-radius: 999px;
-  padding: 10px 12px;
-  border: 1px solid rgba(31,42,36,0.12);
-  background: rgba(255,255,255,0.55);
-  cursor: pointer;
+  border: 1px solid rgba(255, 43, 214, 0.28);
+  background: rgba(255, 43, 214, 0.10);
+  box-shadow: 0 0 0 1px rgba(255, 43, 214, 0.12);
 }
 
+/* =========
+   Botones header
+   ========= */
+.accionesTop{
+  display:flex;
+  gap: 10px;
+  align-items:center;
+}
+
+.btnCambio,
+.btnRecs,
+.btnLimpiar{
+  border-radius: 999px;
+  padding: 10px 12px;
+  border: 1px solid rgba(0,245,255,0.18);
+  background: rgba(14, 16, 32, 0.55);
+  color: var(--texto);
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease, opacity .12s ease;
+}
+
+.btnRecs{
+  display:flex;
+  align-items:center;
+  gap: 8px;
+}
+
+.btnCambio:hover,
+.btnRecs:hover,
+.btnLimpiar:hover{
+  transform: translateY(-0.5px);
+  border-color: rgba(0,245,255,0.28);
+  box-shadow: var(--sombra), var(--glow);
+}
+
+.btnRecs:disabled{
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.badge{
+  min-width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  display:grid;
+  place-items:center;
+  font-size: 12px;
+  background: rgba(0,245,255,0.16);
+  border: 1px solid rgba(0,245,255,0.28);
+  color: var(--texto);
+  padding: 0 6px;
+  box-shadow: 0 0 14px rgba(0,245,255,0.12);
+}
+
+/* =========
+   Tabs
+   ========= */
 .tabs{
   display:flex;
   gap: 8px;
   padding: 8px;
-  border: 1px solid rgba(31,42,36,0.10);
+  border: 1px solid rgba(0,245,255,0.18);
   border-radius: 999px;
-  background: rgba(255,255,255,0.45);
-  backdrop-filter: blur(8px);
+  background: rgba(14, 16, 32, 0.45);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.35);
 }
 
 .tab{
   border: 0;
   background: transparent;
+  color: var(--texto);
   padding: 10px 12px;
   border-radius: 999px;
   cursor: pointer;
   opacity: 0.78;
-  transition: opacity .15s ease, background .15s ease;
+  transition: opacity .15s ease, background .15s ease, box-shadow .15s ease;
 }
 
 .tab.activa{
   opacity: 1;
-  background: rgba(31,42,36,0.10);
+  background: rgba(0,245,255,0.12);
+  box-shadow: 0 0 0 1px rgba(0,245,255,0.16), 0 0 16px rgba(0,245,255,0.10);
 }
 
+/* =========
+   Bloque
+   ========= */
 .bloque{ margin-top: 16px; }
 
 .cabBloque{
@@ -700,13 +759,16 @@ function estiloPortada(item: Seguimiento) {
 
 .contador{
   font-size: 12.5px;
-  opacity: 0.70;
+  opacity: 0.85;
   padding: 6px 10px;
   border-radius: 999px;
-  border: 1px solid rgba(31,42,36,0.10);
-  background: rgba(255,255,255,0.55);
+  border: 1px solid rgba(0,245,255,0.18);
+  background: rgba(14, 16, 32, 0.55);
 }
 
+/* =========
+   Controles
+   ========= */
 .controles{
   display:grid;
   grid-template-columns: 1.4fr 1fr 1fr auto;
@@ -716,26 +778,25 @@ function estiloPortada(item: Seguimiento) {
 }
 
 .campoCtrl{ display:grid; gap: 6px; }
-.labelCtrl{ font-size: 12px; opacity: 0.70; }
+.labelCtrl{ font-size: 12px; opacity: 0.75; }
 
 .inputCtrl{
   border-radius: 14px;
-  border: 1px solid rgba(31,42,36,0.12);
-  background: rgba(255,255,255,0.60);
+  border: 1px solid rgba(0,245,255,0.16);
+  background: rgba(10, 12, 24, 0.55);
   padding: 10px 12px;
   outline: none;
+  color: var(--texto);
 }
 
-.inputCtrl:focus{ border-color: rgba(31,42,36,0.22); }
-
-.btnLimpiar{
-  border-radius: 999px;
-  padding: 10px 12px;
-  border: 1px solid rgba(31,42,36,0.12);
-  background: rgba(255,255,255,0.55);
-  cursor: pointer;
+.inputCtrl:focus{
+  border-color: rgba(0,245,255,0.28);
+  box-shadow: 0 0 0 3px rgba(0,245,255,0.10);
 }
 
+/* =========
+   Stats chips
+   ========= */
 .stats{
   display:flex;
   gap: 8px;
@@ -745,6 +806,42 @@ function estiloPortada(item: Seguimiento) {
 
 .chip{ font-size: 12.5px; }
 
+/* Estado base (pill) */
+.estado{
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,245,255,0.16);
+  background: rgba(14, 16, 32, 0.55);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Estados con “tinte” neon */
+.estado--pendiente{
+  background: rgba(255, 210, 63, 0.08);
+  border-color: rgba(255, 210, 63, 0.20);
+}
+.estado--en_progreso{
+  background: rgba(0, 245, 255, 0.08);
+  border-color: rgba(0, 245, 255, 0.22);
+}
+.estado--terminado{
+  background: rgba(43, 255, 136, 0.08);
+  border-color: rgba(43, 255, 136, 0.22);
+}
+.estado--en_pausa{
+  background: rgba(255, 43, 214, 0.08);
+  border-color: rgba(255, 43, 214, 0.22);
+}
+.estado--abandonado{
+  background: rgba(255, 77, 109, 0.08);
+  border-color: rgba(255, 77, 109, 0.22);
+}
+
+/* =========
+   Grid + Cards
+   ========= */
 .grid{
   position: relative;
   display:grid;
@@ -754,15 +851,20 @@ function estiloPortada(item: Seguimiento) {
 
 .card{
   border-radius: 18px;
-  border: 1px solid rgba(31,42,36,0.10);
-  background: rgba(255,255,255,0.55);
-  box-shadow: 0 14px 34px rgba(0,0,0,0.08);
-  backdrop-filter: blur(8px);
+  border: 1px solid rgba(0,245,255,0.16);
+  background: var(--tarjeta);
+  box-shadow: var(--sombra);
+  backdrop-filter: blur(10px);
   overflow: hidden;
+  cursor: pointer;
+  transition: transform .14s ease, box-shadow .14s ease, border-color .14s ease;
 }
 
-.card{ cursor: pointer; }
-.card:hover{ box-shadow: 0 18px 44px rgba(0,0,0,0.10); }
+.card:hover{
+  transform: translateY(-1px);
+  border-color: rgba(0,245,255,0.26);
+  box-shadow: var(--sombra), var(--glow);
+}
 
 .filaCard{
   display:flex;
@@ -775,11 +877,12 @@ function estiloPortada(item: Seguimiento) {
   width: 56px;
   height: 56px;
   border-radius: 16px;
-  border: 1px solid rgba(31,42,36,0.08);
+  border: 1px solid rgba(0,245,255,0.16);
   overflow:hidden;
   flex: 0 0 auto;
   display:grid;
   place-items:center;
+  background: rgba(10, 12, 24, 0.45);
 }
 
 .portada img{
@@ -795,7 +898,9 @@ function estiloPortada(item: Seguimiento) {
   place-items:center;
   font-weight: 800;
   letter-spacing: 0.2px;
-  opacity: 0.82;
+  opacity: 0.90;
+  color: rgba(235,244,255,0.92);
+  text-shadow: 0 0 18px rgba(0,245,255,0.16);
 }
 
 .info{ flex: 1; min-width: 0; }
@@ -811,41 +916,12 @@ function estiloPortada(item: Seguimiento) {
 .meta{
   margin-top: 4px;
   font-size: 12.5px;
-  opacity: 0.72;
+  opacity: 0.78;
 }
 
-.estado{
-  padding: 3px 8px;
-  border-radius: 999px;
-  border: 1px solid rgba(31,42,36,0.10);
-  background: rgba(255,255,255,0.55);
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-/* Colores suaves por estado */
-.estado--pendiente{
-  background: rgba(120, 120, 120, 0.10);
-  border-color: rgba(120, 120, 120, 0.18);
-}
-.estado--en_progreso{
-  background: rgba(70, 130, 180, 0.12);
-  border-color: rgba(70, 130, 180, 0.22);
-}
-.estado--terminado{
-  background: rgba(60, 160, 90, 0.14);
-  border-color: rgba(60, 160, 90, 0.24);
-}
-.estado--en_pausa{
-  background: rgba(230, 170, 60, 0.16);
-  border-color: rgba(230, 170, 60, 0.28);
-}
-.estado--abandonado{
-  background: rgba(200, 70, 70, 0.14);
-  border-color: rgba(200, 70, 70, 0.24);
-}
-
+/* =========
+   Comentario
+   ========= */
 .comentario{
   margin: 8px 0 0;
   font-size: 12.5px;
@@ -870,48 +946,158 @@ function estiloPortada(item: Seguimiento) {
   background: transparent;
   cursor: pointer;
   font-size: 12.5px;
-  opacity: 0.78;
+  opacity: 0.82;
   text-decoration: underline;
   text-underline-offset: 3px;
   padding: 0;
+  color: var(--teal);
 }
 
+/* =========
+   Botones mini progreso
+   ========= */
+.progresoCtrl{
+  display:inline-flex;
+  gap: 6px;
+  margin-left: 10px;
+  vertical-align: middle;
+}
+
+.miniBtn{
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,245,255,0.16);
+  background: rgba(14, 16, 32, 0.50);
+  cursor: pointer;
+  display:grid;
+  place-items:center;
+  font-size: 14px;
+  line-height: 1;
+  opacity: 0.92;
+  color: var(--texto);
+  transition: transform .12s ease, opacity .12s ease, box-shadow .12s ease, border-color .12s ease;
+}
+
+.miniBtn:hover{
+  transform: translateY(-0.5px);
+  border-color: rgba(0,245,255,0.28);
+  box-shadow: 0 0 0 3px rgba(0,245,255,0.10);
+  opacity: 1;
+}
+
+.miniBtn:disabled{
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* =========
+   Acciones card
+   ========= */
 .accionesCard{
   display:flex;
   gap: 6px;
   align-items:flex-start;
 }
 
-.editar, .borrar{
+.editar, .borrar, .recomendar, .pin{
   border: 0;
   background: transparent;
   cursor: pointer;
-  opacity: 0.55;
+  opacity: 0.65;
   font-size: 14px;
   padding: 4px 6px;
+  transition: opacity .12s ease, transform .12s ease;
 }
-.editar:hover, .borrar:hover{ opacity: 0.85; }
 
+.editar:hover, .borrar:hover, .recomendar:hover, .pin:hover{
+  opacity: 1;
+  transform: translateY(-0.5px);
+}
+
+.verLink{
+  text-decoration: none;
+  opacity: 0.75;
+  padding: 4px 6px;
+  border-radius: 10px;
+  transition: opacity .12s ease, box-shadow .12s ease;
+}
+.verLink:hover{
+  opacity: 1;
+  box-shadow: 0 0 0 3px rgba(0,245,255,0.10);
+}
+
+/* =========
+   Tags
+   ========= */
+.tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.tag{
+  border: 1px solid rgba(0,245,255,0.14);
+  background: rgba(14, 16, 32, 0.52);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  opacity: 0.88;
+  color: rgba(235,244,255,0.86);
+  transition: opacity .12s ease, border-color .12s ease, box-shadow .12s ease, transform .12s ease;
+}
+
+.tag:hover{
+  opacity: 1;
+  border-color: rgba(0,245,255,0.26);
+  box-shadow: 0 0 0 3px rgba(0,245,255,0.10);
+  transform: translateY(-0.5px);
+}
+
+.tag--more{
+  cursor: default;
+  opacity: 0.65;
+}
+
+/* =========
+   Vacío
+   ========= */
 .vacio{
   margin-top: 14px;
   padding: 18px;
   border-radius: 18px;
-  border: 1px dashed rgba(31,42,36,0.18);
-  background: rgba(255,255,255,0.40);
+  border: 1px dashed rgba(0,245,255,0.20);
+  background: rgba(14, 16, 32, 0.45);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.35);
 }
 
 .vacioCaja{ text-align:center; padding: 22px 14px; }
 .vacioTitulo{ font-weight: 800; letter-spacing: 0.2px; }
 .vacioSub{ margin-top: 8px; opacity: 0.74; font-size: 13px; }
 
+/* =========
+   Botones principales
+   ========= */
 .btnPri{
   margin-top: 14px;
   border-radius: 999px;
   padding: 10px 14px;
-  border: 1px solid rgba(31,42,36,0.12);
-  background: rgba(31,42,36,0.92);
-  color: #fff;
+  border: 1px solid rgba(0,245,255,0.18);
+  background: var(--btn);
+  color: var(--btn-texto);
   cursor: pointer;
+  box-shadow: var(--sombra), var(--glow);
+  transition: transform .14s ease, box-shadow .14s ease, border-color .14s ease;
+}
+
+.btnPri:hover{
+  transform: translateY(-0.5px);
+  border-color: rgba(0,245,255,0.28);
+  box-shadow: var(--sombra), var(--glow), 0 0 26px rgba(255,43,214,0.12);
 }
 
 .btnAñadir{
@@ -920,17 +1106,18 @@ function estiloPortada(item: Seguimiento) {
   gap: 10px;
   border-radius: 999px;
   padding: 12px 16px;
-  border: 1px solid rgba(31,42,36,0.12);
-  background: rgba(31,42,36,0.92);
-  color: #fff;
+  border: 1px solid rgba(0,245,255,0.18);
+  background: var(--btn);
+  color: var(--btn-texto);
   cursor: pointer;
-  box-shadow: 0 18px 44px rgba(0,0,0,0.16);
-  transition: transform .16s ease, box-shadow .16s ease;
+  box-shadow: var(--sombra), var(--glow);
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
 }
 
 .btnAñadir:hover{
   transform: translateY(-1px);
-  box-shadow: 0 22px 54px rgba(0,0,0,0.20);
+  border-color: rgba(0,245,255,0.30);
+  box-shadow: var(--sombra), var(--glow), 0 0 34px rgba(0,245,255,0.10);
 }
 
 .plus{
@@ -940,20 +1127,41 @@ function estiloPortada(item: Seguimiento) {
   display: grid;
   place-items: center;
   position: relative;
-  background: rgba(255,255,255,0.14);
-  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(0,245,255,0.10);
+  border: 1px solid rgba(0,245,255,0.18);
 }
 
 .plus .v,
 .plus .h{
   position: absolute;
-  background: rgba(255,255,255,0.92);
+  background: rgba(235,244,255,0.92);
   border-radius: 999px;
 }
 .plus .v{ width: 2px; height: 12px; }
 .plus .h{ width: 12px; height: 2px; }
 
-/* Animaciones cards */
+/* =========
+   FAB
+   ========= */
+.fabAñadir{
+  position: fixed;
+  right: 20px;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  z-index: 50;
+}
+
+@media (max-width: 720px){
+  .grid{ grid-template-columns: 1fr; }
+  .controles{ grid-template-columns: 1fr; }
+  .fabAñadir{
+    right: 14px;
+    bottom: calc(14px + env(safe-area-inset-bottom));
+  }
+}
+
+/* =========
+   Animaciones cards (igual)
+   ========= */
 .cards-enter-active,
 .cards-leave-active{
   transition: opacity .18s ease, transform .18s ease;
@@ -977,143 +1185,14 @@ function estiloPortada(item: Seguimiento) {
   transition: transform .18s ease;
 }
 
-@media (max-width: 720px){
-  .grid{ grid-template-columns: 1fr; }
-  .controles{ grid-template-columns: 1fr; }
-}
-
-.progresoCtrl{
-  display:inline-flex;
-  gap: 6px;
-  margin-left: 10px;
-  vertical-align: middle;
-}
-
-.miniBtn{
-  width: 30px;
-  height: 30px;
-  border-radius: 999px;
-  border: 1px solid rgba(31,42,36,0.12);
-  background: rgba(255,255,255,0.55);
-  cursor: pointer;
-
-  display:grid;
-  place-items:center;
-
-  font-size: 14px;
-  line-height: 1;
-  opacity: 0.88;
-
-  transition: transform .12s ease, opacity .12s ease;
-}
-
-.miniBtn:hover{
-  transform: translateY(-0.5px);
-  opacity: 1;
-}
-
-.miniBtn:disabled{
-  opacity: 0.35;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.accionesTop{
-  display:flex;
-  gap: 10px;
-  align-items:center;
-}
-
-.btnRecs{
-  border-radius: 999px;
-  padding: 10px 12px;
-  border: 1px solid rgba(31,42,36,0.12);
-  background: rgba(255,255,255,0.55);
-  cursor: pointer;
-  display:flex;
-  align-items:center;
-  gap: 8px;
-}
-
-.btnRecs:disabled{
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-.badge{
-  min-width: 22px;
-  height: 22px;
-  border-radius: 999px;
-  display:grid;
-  place-items:center;
-  font-size: 12px;
-  background: rgba(31,42,36,0.92);
-  color: #fff;
-  padding: 0 6px;
-}
-
-.recomendar{
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-  opacity: 0.60;
-  font-size: 14px;
-  padding: 4px 6px;
-}
-.recomendar:hover{ opacity: 0.90; }
-
-.tags{
-  display:flex;
-  flex-wrap:wrap;
-  gap: 6px;
-  margin-top: 8px;
-}
-
-.tag{
-  border: 1px solid rgba(31,42,36,0.10);
-  background: rgba(255,255,255,0.50);
-  border-radius: 999px;
-  padding: 4px 10px;
-  font-size: 12px;
-  cursor: pointer;
-  opacity: 0.82;
-}
-
-.tag:hover{ opacity: 1; }
-
-.tag--more{
-  cursor: default;
-  opacity: 0.65;
-}
-.verLink{
-  text-decoration: none;
-  opacity: 0.6;
-  padding: 4px 6px;
-  border-radius: 10px;
-}
-.verLink:hover{ opacity: 0.9; }
-
-.fabAñadir{
-  position: fixed;
-  right: 20px;
-  bottom: calc(16px + env(safe-area-inset-bottom));
-  z-index: 50;
-}
-
-@media (max-width: 720px){
-  .fabAñadir{
-    right: 14px;
-    bottom: calc(14px + env(safe-area-inset-bottom));
-  }
-}
-
+/* =========
+   Mobile (mantengo tu layout)
+   ========= */
 @media (max-width: 640px){
-
   .contenedor{
-    padding: 14px 12px 100px; /* deja hueco para el botón flotante */
+    padding: 14px 12px 100px;
   }
 
-  /* Header apilado */
   .top{
     flex-direction: column;
     align-items: stretch;
@@ -1124,26 +1203,18 @@ function estiloPortada(item: Seguimiento) {
   .perfil{
     align-items: flex-start;
     gap: 10px;
+    min-width: 0;
   }
 
-  .perfil{ min-width: 0; }
   .saludo{ min-width: 0; }
+
   .hola, .sub, .logeado{
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
-  @media (max-width: 640px){
-    .logeado{ white-space: nowrap; }
-  }
-
-  @media (max-width: 640px){
-    .tabs{
-      display: flex;
-      flex-wrap: nowrap;
-    }
-  }
+  .logeado{ white-space: nowrap; }
 
   .avatar{
     width: 44px;
@@ -1155,21 +1226,22 @@ function estiloPortada(item: Seguimiento) {
   .hola{ font-size: 16px; }
   .sub{ font-size: 12.5px; }
 
-  /* Botones del header en grid 2x2 (evita desbordes) */
   .accionesTop{
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
     align-items: stretch;
+    width: 100%;
   }
 
   .btnRecs, .btnCambio{
     width: 100%;
     justify-content: center;
     padding: 10px 12px;
+    min-width: 0;
+    white-space: nowrap;
   }
 
-  /* Tabs en scroll horizontal */
   .tabs{
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -1183,18 +1255,6 @@ function estiloPortada(item: Seguimiento) {
     flex: 0 0 auto;
   }
 
-  /* Controles en columna */
-  .controles{
-    grid-template-columns: 1fr;
-    gap: 10px;
-    align-items: stretch;
-  }
-
-  .btnLimpiar{
-    width: 100%;
-  }
-
-  /* Chips (En progreso / Pendiente / Terminado) que no revienten */
   .stats{
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -1204,7 +1264,6 @@ function estiloPortada(item: Seguimiento) {
   .stats::-webkit-scrollbar{ display:none; }
   .chip{ white-space: nowrap; }
 
-  /* Grid de cards a 1 columna */
   .grid{
     grid-template-columns: 1fr;
     gap: 10px;
@@ -1221,7 +1280,6 @@ function estiloPortada(item: Seguimiento) {
     border-radius: 14px;
   }
 
-  /* Meta en varias líneas, más legible */
   .meta{
     display: flex;
     flex-wrap: wrap;
@@ -1229,34 +1287,17 @@ function estiloPortada(item: Seguimiento) {
     line-height: 1.3;
   }
 
-  /* Botones de acciones más “tocables” */
-  .editar, .borrar, .recomendar{
+  .editar, .borrar, .recomendar, .pin{
     padding: 8px 8px;
     font-size: 16px;
   }
 }
 
-@media (max-width: 640px){
-  .accionesTop{
-    width: 100%;
-  }
-  .btnRecs, .btnCambio{
-    min-width: 0;
-    white-space: nowrap;
-  }
-}
-.pin{
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-  opacity: 0.55;
-  font-size: 14px;
-  padding: 4px 6px;
-}
-.pin:hover{ opacity: 0.9; }
-
-/* opcional: estado activo */
+/* =========
+   Pinned
+   ========= */
 .card.pinned{
-  outline: 2px solid rgba(31,42,36,0.18);
+  outline: 2px solid rgba(255, 43, 214, 0.22);
+  box-shadow: var(--sombra), 0 0 0 1px rgba(255,43,214,0.12), 0 0 24px rgba(255,43,214,0.10);
 }
 </style>
