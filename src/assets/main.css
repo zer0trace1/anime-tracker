@@ -1,55 +1,66 @@
 :root{
-  /* Paleta pastel (inspirada en la imagen que has pasado) */
-  --crema: #FBFBFA;
-  --papel: #E5E4DD;
-  --melocoton: #ECC6AD;
-  --mantequilla: #FDE9B4;
-  --arena: #D9B265;
+  /* =========================
+     CYBERPUNK OSCURO (NEON)
+     Mantengo tus tokens para no romper componentes
+     ========================= */
 
-  --salvia: #8CA697;
-  --salvia-oscura: #668468;
-  --musgo: #7E9A25;
-  --bosque: #295B31;
+  /* Base oscura */
+  --crema: #070812;          /* ahora es negro-azulado */
+  --papel: #0b0d1a;          /* segundo fondo */
+  --cacao: #0a0b14;
 
-  --teal: #0B889E;
-  --azul-profundo: #014B72;
+  /* Neones (reaprovecho nombres) */
+  --teal: #00f5ff;           /* cyan neon */
+  --rosa: #ff2bd6;           /* magenta neon */
+  --coral: #ff4d6d;          /* rojo/rosa neon */
+  --musgo: #2bff88;          /* verde neon */
+  --arena: #ffd23f;          /* amarillo neon */
 
-  --malva: #926582;
-  --rosa: #E98EAB;
-  --coral: #DE5856;
+  /* (Opcional) tonos “profundos” */
+  --azul-profundo: #0b3bff;
+  --malva: #7a3cff;
 
-  --cacao: #44342E;
+  /* Texto */
+  --texto: rgba(235, 244, 255, 0.92);
+  --texto-suave: rgba(235, 244, 255, 0.72);
 
-  /* Tokens de UI */
+  /* UI tokens (CLAVE) */
   --fondo: var(--crema);
-  --texto: #1f2a24;
 
-  --tarjeta: rgba(255,255,255,0.62);
-  --tarjeta-borde: rgba(31,42,36,0.10);
-  --suave: rgba(31, 42, 36, 0.10);
-  --suave-2: rgba(31, 42, 36, 0.16);
-  --sombra: 0 12px 30px rgba(0,0,0,0.08);
+  /* Cristal oscuro */
+  --tarjeta: rgba(14, 16, 32, 0.62);
+  --tarjeta-borde: rgba(0, 245, 255, 0.18);
+
+  --suave: rgba(0, 245, 255, 0.10);
+  --suave-2: rgba(255, 43, 214, 0.12);
+
+  /* Sombra + glow */
+  --sombra: 0 18px 44px rgba(0,0,0,0.55);
+  --glow: 0 0 0 1px rgba(0,245,255,0.14),
+          0 0 18px rgba(0,245,255,0.12),
+          0 0 28px rgba(255,43,214,0.10);
 
   --radio: 22px;
 
   /* Botón principal */
-  --btn: rgba(31,42,36,0.92);
-  --btn-texto: #fff;
+  --btn: linear-gradient(135deg, rgba(0,245,255,0.18), rgba(255,43,214,0.16));
+  --btn-texto: rgba(235, 244, 255, 0.95);
 }
 
 * { box-sizing: border-box; }
-html, body { height: 100%; }
+html, body { height: 100%; width: 100%; overflow-x: hidden; }
 
 body{
   margin: 0;
   color: var(--texto);
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
+
   /* base */
   background: var(--fondo);
   position: relative;
 }
 
-/* ✅ Fondo fijo, sin seams */
+/* ✅ Fondo cyberpunk oscuro fijo */
 body::before{
   content: "";
   position: fixed;
@@ -58,24 +69,33 @@ body::before{
   pointer-events: none;
 
   background:
-    radial-gradient(1000px 600px at 18% 8%, rgba(140,166,151,0.35), transparent 60%),
-    radial-gradient(900px 520px at 82% 20%, rgba(11,136,158,0.18), transparent 60%),
-    radial-gradient(900px 700px at 60% 95%, rgba(233,142,171,0.20), transparent 55%),
-    linear-gradient(180deg, var(--fondo), var(--papel));
+    radial-gradient(900px 520px at 18% 8%, rgba(0,245,255,0.18), transparent 60%),
+    radial-gradient(900px 520px at 82% 20%, rgba(255,43,214,0.16), transparent 62%),
+    radial-gradient(900px 700px at 60% 95%, rgba(43,255,136,0.10), transparent 60%),
+    radial-gradient(1200px 800px at 40% 40%, rgba(255,210,63,0.06), transparent 70%),
+    linear-gradient(180deg, var(--papel), var(--crema));
 }
 
-a { color: inherit; text-decoration: none; }
+a { color: var(--teal); text-decoration: none; }
+a:hover{ text-decoration: underline; text-underline-offset: 3px; }
+
 button, input, select, textarea { font: inherit; }
 
-html, body {
-  width: 100%;
-  overflow-x: hidden; /* evita el “espacio fantasma” a la derecha */
+img { max-width: 100%; }
+
+/* Inputs globales (para que no se vean “blancos” en oscuro) */
+input, select, textarea{
+  color: var(--texto);
+  background: rgba(10, 12, 24, 0.55);
+  border: 1px solid rgba(0,245,255,0.16);
 }
 
-* {
-  box-sizing: border-box;
+input::placeholder, textarea::placeholder{
+  color: rgba(235,244,255,0.45);
 }
 
-img {
-  max-width: 100%;
+input:focus, select:focus, textarea:focus{
+  outline: none;
+  border-color: rgba(0,245,255,0.28);
+  box-shadow: 0 0 0 3px rgba(0,245,255,0.10);
 }
