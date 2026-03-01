@@ -314,20 +314,31 @@ function guardar() {
 
 input, select, textarea{
   border-radius: 14px;
-  border: 1px solid var(--input-border);
-  background: var(--input);
-  color: var(--texto);
+  border: 1px solid rgba(0, 255, 213, 0.22);     /* cyan neon suave */
+  background: rgba(3, 6, 12, 0.55);             /* fondo oscuro visible */
+  color: rgba(235, 247, 255, 0.92);             /* texto claro */
   padding: 10px 12px;
   outline: none;
+
+  /* un pelín de “cristal” */
+  box-shadow: inset 0 0 0 1px rgba(255, 0, 208, 0.06);
 }
 
-input::placeholder, textarea::placeholder{
-  color: rgba(234, 240, 255, 0.55);
+input::placeholder,
+textarea::placeholder{
+  color: rgba(235, 247, 255, 0.45);
+}
+
+select{
+  color: rgba(235, 247, 255, 0.92);
+  color-scheme: dark; /* hace que el desplegable sea dark en muchos navegadores */
 }
 
 input:focus, select:focus, textarea:focus{
-  border-color: rgba(0, 255, 240, 0.45);
-  box-shadow: 0 0 0 3px rgba(0, 255, 240, 0.14);
+  border-color: rgba(255, 0, 208, 0.55); /* magenta neon al focus */
+  box-shadow:
+    0 0 0 3px rgba(255, 0, 208, 0.14),
+    0 0 18px rgba(0, 255, 213, 0.12);
 }
 
 .chips{
