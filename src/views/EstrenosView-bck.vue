@@ -340,8 +340,8 @@ function eliminar(item: Estreno) {
   width: 52px;
   height: 52px;
   border-radius: 16px;
-  border: 1px solid var(--tarjeta-borde);
-  background: var(--chip);
+  border: 1px solid rgba(31,42,36,0.10);
+  background: rgba(255,255,255,0.45);
   object-fit: cover;
 }
 
@@ -359,7 +359,7 @@ function eliminar(item: Estreno) {
   opacity: 0.86;
   padding: 6px 10px;
   border-radius: 999px;
-  border: 1px solid var(--tarjeta-borde);
+  border: 1px solid rgba(31,42,36,0.12);
   background: rgba(230, 170, 60, 0.12);
 }
 
@@ -372,8 +372,8 @@ function eliminar(item: Estreno) {
 .btnCambio{
   border-radius: 999px;
   padding: 10px 12px;
-  border: 1px solid var(--tarjeta-borde);
-  background: var(--chip);
+  border: 1px solid rgba(31,42,36,0.12);
+  background: rgba(255,255,255,0.55);
   cursor: pointer;
 }
 
@@ -397,8 +397,8 @@ function eliminar(item: Estreno) {
   opacity: 0.70;
   padding: 6px 10px;
   border-radius: 999px;
-  border: 1px solid var(--tarjeta-borde);
-  background: var(--chip);
+  border: 1px solid rgba(31,42,36,0.10);
+  background: rgba(255,255,255,0.55);
 }
 
 .controles{
@@ -414,19 +414,19 @@ function eliminar(item: Estreno) {
 
 .inputCtrl{
   border-radius: 14px;
-  border: 1px solid var(--tarjeta-borde);
-  background: var(--input);
+  border: 1px solid rgba(31,42,36,0.12);
+  background: rgba(255,255,255,0.60);
   padding: 10px 12px;
   outline: none;
 }
 
-.inputCtrl:focus{ border-color: rgba(0, 255, 240, 0.35); }
+.inputCtrl:focus{ border-color: rgba(31,42,36,0.22); }
 
 .btnLimpiar{
   border-radius: 999px;
   padding: 10px 12px;
-  border: 1px solid var(--tarjeta-borde);
-  background: var(--chip);
+  border: 1px solid rgba(31,42,36,0.12);
+  background: rgba(255,255,255,0.55);
   cursor: pointer;
 }
 
@@ -438,9 +438,9 @@ function eliminar(item: Estreno) {
 
 .card{
   border-radius: 18px;
-  border: 1px solid var(--tarjeta-borde);
-  background: var(--chip);
-  box-shadow: 0 18px 44px rgba(0,0,0,0.35);
+  border: 1px solid rgba(31,42,36,0.10);
+  background: rgba(255,255,255,0.55);
+  box-shadow: 0 14px 34px rgba(0,0,0,0.08);
   backdrop-filter: blur(8px);
 }
 
@@ -475,8 +475,8 @@ function eliminar(item: Estreno) {
 .chip{
   padding: 3px 8px;
   border-radius: 999px;
-  border: 1px solid var(--tarjeta-borde);
-  background: var(--chip);
+  border: 1px solid rgba(31,42,36,0.10);
+  background: rgba(255,255,255,0.55);
 }
 
 .fecha{ opacity: 0.72; }
@@ -499,8 +499,8 @@ function eliminar(item: Estreno) {
   font-size: 12px;
   padding: 5px 10px;
   border-radius: 999px;
-  border: 1px solid var(--tarjeta-borde);
-  background: var(--chip);
+  border: 1px solid rgba(31,42,36,0.12);
+  background: rgba(255,255,255,0.55);
   opacity: 0.9;
 }
 
@@ -530,8 +530,8 @@ function eliminar(item: Estreno) {
   margin-top: 14px;
   padding: 18px;
   border-radius: 18px;
-  border: 1px dashed rgba(0, 255, 240, 0.18);
-  background: rgba(255,255,255,0.02);
+  border: 1px dashed rgba(31,42,36,0.18);
+  background: rgba(255,255,255,0.40);
 }
 
 .vacioCaja{ text-align:center; padding: 22px 14px; }
@@ -542,8 +542,8 @@ function eliminar(item: Estreno) {
   margin-top: 14px;
   border-radius: 999px;
   padding: 10px 14px;
-  border: 1px solid var(--tarjeta-borde);
-  background: var(--btn);
+  border: 1px solid rgba(31,42,36,0.12);
+  background: rgba(31,42,36,0.92);
   color: #fff;
   cursor: pointer;
 }
@@ -560,8 +560,8 @@ function eliminar(item: Estreno) {
   gap: 10px;
   border-radius: 999px;
   padding: 12px 16px;
-  border: 1px solid var(--tarjeta-borde);
-  background: var(--btn);
+  border: 1px solid rgba(31,42,36,0.12);
+  background: rgba(31,42,36,0.92);
   color: #fff;
   cursor: pointer;
   box-shadow: 0 18px 44px rgba(0,0,0,0.16);
@@ -669,8 +669,4 @@ function eliminar(item: Estreno) {
 .perfil{ min-width: 0; }
 .left{ min-width: 0; }
 .titulo{ max-width: 100%; }
-
-
-/* Cyberpunk dark overrides */
-.card{ background: var(--tarjeta); box-shadow: var(--sombra); }
 </style>

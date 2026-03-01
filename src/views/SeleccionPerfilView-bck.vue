@@ -191,7 +191,7 @@ function fileToDataUrlResized(file: File, maxSide = 256, quality = 0.85): Promis
 .btnCambio{
   border-radius: 999px;
   padding: 10px 12px;
-  border: 1px solid var(--tarjeta-borde);
+  border: 1px solid rgba(31,42,36,0.12);
   background: rgba(255,255,255,0.55);
   cursor: pointer;
 }
@@ -223,11 +223,11 @@ function fileToDataUrlResized(file: File, maxSide = 256, quality = 0.85): Promis
   .grid { grid-template-columns: 1fr; }
 }
 .card {
-  background: var(--tarjeta);
-  border: 1px solid var(--tarjeta-borde);
+  background: rgba(255,255,255,0.75);
+  border: 1px solid rgba(0,0,0,0.06);
   border-radius: 18px;
   padding: 18px 16px 14px;
-  box-shadow: 0 18px 44px rgba(0,0,0,0.40);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.08);
   cursor: pointer;
   transition: transform .15s ease, box-shadow .15s ease;
 }
@@ -240,8 +240,8 @@ function fileToDataUrlResized(file: File, maxSide = 256, quality = 0.85): Promis
   height: 96px;
   margin: 6px auto 12px;
   border-radius: 24px;
-  background: var(--tarjeta);
-  border: 1px solid var(--tarjeta-borde);
+  background: rgba(255,255,255,0.75);
+  border: 1px solid rgba(0,0,0,0.06);
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -292,7 +292,7 @@ function fileToDataUrlResized(file: File, maxSide = 256, quality = 0.85): Promis
   font-size: 12px;
   padding: 4px 10px;
   border-radius: 999px;
-  border: 1px solid var(--tarjeta-borde);
+  border: 1px solid rgba(0,0,0,0.08);
   background: rgba(255,255,255,0.55);
   opacity: 0.9;
 }

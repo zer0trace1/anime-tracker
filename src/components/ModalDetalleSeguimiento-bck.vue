@@ -150,49 +150,45 @@ const updated = computed(() => {
 .fondo{
   position: fixed;
   inset: 0;
-  background: var(--overlay);
+  background: rgba(20, 24, 22, 0.30);
   display:flex;
   align-items:center;
   justify-content:center;
   padding: 16px;
   z-index: 50;
+
+  /* por si algún modal es más alto que la pantalla */
   overflow: auto;
 }
 
 .modal{
   width: min(720px, 100%);
   border-radius: 22px;
-  border: 1px solid var(--tarjeta-borde);
-  background: var(--tarjeta);
-  box-shadow: var(--sombra);
-  backdrop-filter: blur(12px);
+  border: 1px solid rgba(31,42,36,0.12);
+  background: rgba(255,255,255,0.72);
+  box-shadow: 0 24px 70px rgba(0,0,0,0.18);
+  backdrop-filter: blur(10px);
 
+  /* 🔥 CLAVE: limitar altura y hacer layout en columna */
   max-height: calc(100dvh - 32px);
   display: flex;
   flex-direction: column;
+
+  /* ya NO conviene cortar todo, el scroll va dentro */
   overflow: hidden;
 }
 
 .cabecera{
   flex: 0 0 auto;
   display:flex;
-  align-items:flex-start;
+  align-items:center;
   justify-content:space-between;
-  gap: 12px;
   padding: 14px 16px;
-  border-bottom: 1px solid var(--suave-2);
-}
-
-.cerrar{
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-  font-size: 16px;
-  opacity: 0.8;
-  color: var(--texto);
+  border-bottom: 1px solid rgba(31,42,36,0.10);
 }
 
 .contenido{
+  /* 🔥 CLAVE: aquí vive el scroll */
   flex: 1 1 auto;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -203,11 +199,38 @@ const updated = computed(() => {
   gap: 12px;
 }
 
+/*.acciones{
+  position: sticky;
+  bottom: 0;
+
+  display:flex;
+  justify-content:flex-end;
+  gap: 10px;
+
+  margin: 0 -16px -16px;
+  padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
+
+  border-top: 1px solid rgba(31,42,36,0.10);
+
+  background: linear-gradient(
+    to top,
+    rgba(255,255,255,0.82) 0%,
+    rgba(255,255,255,0.72) 60%,
+    rgba(255,255,255,0) 100%
+  );
+  backdrop-filter: blur(10px);
+}*/
+.acciones{
+  display:flex;
+  justify-content:flex-end;
+  gap: 10px;
+  margin-top: 6px;
+}
+
 .titulo{
-  font-weight: 900;
+  font-weight: 800;
   letter-spacing: 0.2px;
   font-size: 16px;
-  color: var(--texto);
 }
 
 .sub{
@@ -223,22 +246,28 @@ const updated = computed(() => {
   border-radius: 999px;
   padding: 5px 10px;
   font-size: 12px;
-  border: 1px solid var(--tarjeta-borde);
-  background: var(--chip);
-  color: var(--texto);
-  opacity: 0.92;
+  border: 1px solid rgba(31,42,36,0.10);
+  background: rgba(255,255,255,0.55);
+  opacity: 0.9;
 }
 .pill--lectura{
-  border-color: rgba(255, 232, 120, 0.25);
-  background: rgba(255, 232, 120, 0.10);
-  color: rgba(255, 232, 120, 0.95);
+  background: rgba(230, 170, 60, 0.14);
+  border-color: rgba(230, 170, 60, 0.28);
 }
 
-.pill--pendiente{ border-color: rgba(180, 186, 200, 0.24); background: rgba(180,186,200,0.10); }
-.pill--en_progreso{ border-color: rgba(0, 255, 240, 0.24); background: rgba(0,255,240,0.08); }
-.pill--terminado{ border-color: rgba(0, 255, 150, 0.22); background: rgba(0,255,150,0.08); }
-.pill--en_pausa{ border-color: rgba(255, 232, 120, 0.24); background: rgba(255,232,120,0.10); }
-.pill--abandonado{ border-color: rgba(255, 84, 156, 0.26); background: rgba(255,84,156,0.10); }
+.pill--pendiente{ background: rgba(120,120,120,0.10); border-color: rgba(120,120,120,0.18); }
+.pill--en_progreso{ background: rgba(70,130,180,0.12); border-color: rgba(70,130,180,0.22); }
+.pill--terminado{ background: rgba(60,160,90,0.14); border-color: rgba(60,160,90,0.24); }
+.pill--en_pausa{ background: rgba(230,170,60,0.16); border-color: rgba(230,170,60,0.28); }
+.pill--abandonado{ background: rgba(200,70,70,0.14); border-color: rgba(200,70,70,0.24); }
+
+.cerrar{
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-size: 16px;
+  opacity: 0.75;
+}
 
 .gridTop{
   display:grid;
@@ -250,9 +279,9 @@ const updated = computed(() => {
   width: 180px;
   height: 180px;
   border-radius: 18px;
-  border: 1px solid var(--tarjeta-borde);
+  border: 1px solid rgba(31,42,36,0.08);
   overflow:hidden;
-  background: var(--chip);
+  background: rgba(255,255,255,0.55);
   display:grid;
   place-items:center;
 }
@@ -275,8 +304,8 @@ const updated = computed(() => {
   gap: 10px;
   align-items: baseline;
 }
-.label{ font-size: 12.5px; opacity: 0.78; }
-.value{ font-size: 13.5px; font-weight: 700; opacity: 0.95; }
+.label{ font-size: 12.5px; opacity: 0.72; }
+.value{ font-size: 13.5px; font-weight: 600; opacity: 0.9; }
 
 .tags{
   display:flex;
@@ -285,20 +314,19 @@ const updated = computed(() => {
 }
 
 .tag{
-  border: 1px solid var(--tarjeta-borde);
-  background: var(--chip);
+  border: 1px solid rgba(31,42,36,0.10);
+  background: rgba(255,255,255,0.55);
   border-radius: 999px;
   padding: 5px 10px;
   font-size: 12px;
-  opacity: 0.9;
-  color: var(--texto);
+  opacity: 0.84;
 }
 
 .comentario .label{ margin-bottom: 6px; }
 .comentario p{
   margin: 0;
   line-height: 1.45;
-  opacity: 0.9;
+  opacity: 0.86;
 }
 
 .vacio{
@@ -307,36 +335,25 @@ const updated = computed(() => {
   padding: 14px 0;
 }
 
-.acciones{
-  display:flex;
-  justify-content:flex-end;
-  margin-top: 6px;
-}
-
 .btn{
   border-radius: 999px;
   padding: 10px 14px;
-  border: 1px solid var(--tarjeta-borde);
-  background: var(--btn);
-  color: var(--btn-texto);
+  border: 1px solid rgba(31,42,36,0.12);
+  background: rgba(31,42,36,0.92);
+  color: #fff;
   cursor: pointer;
-  box-shadow: 0 0 18px rgba(0, 255, 240, 0.10);
-}
-
-.btn:hover{
-  box-shadow: 0 0 0 3px rgba(255, 0, 255, 0.12), 0 0 0 1px rgba(0, 255, 240, 0.20), 0 0 22px rgba(0, 255, 240, 0.12);
-}
-
-.btnLink{
-  font-size: 12.5px;
-  opacity: 0.9;
-  color: var(--link);
-  font-weight: 800;
 }
 
 @media (max-width: 720px){
   .gridTop{ grid-template-columns: 1fr; }
   .portada{ width: 100%; height: 220px; }
   .linea{ grid-template-columns: 1fr; }
+}
+
+.btnLink{
+  font-size: 12.5px;
+  opacity: 0.72;
+  color:rgba(37, 167, 243, 0.966);
+  font-weight: bold;
 }
 </style>

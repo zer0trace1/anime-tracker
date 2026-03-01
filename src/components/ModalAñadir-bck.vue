@@ -244,26 +244,31 @@ function guardar() {
 .fondo{
   position: fixed;
   inset: 0;
-  background: var(--overlay);
+  background: rgba(20, 24, 22, 0.30);
   display:flex;
   align-items:center;
   justify-content:center;
   padding: 16px;
   z-index: 50;
+
+  /* por si algún modal es más alto que la pantalla */
   overflow: auto;
 }
 
 .modal{
   width: min(720px, 100%);
   border-radius: 22px;
-  border: 1px solid var(--tarjeta-borde);
-  background: var(--tarjeta);
-  box-shadow: var(--sombra);
-  backdrop-filter: blur(12px);
+  border: 1px solid rgba(31,42,36,0.12);
+  background: rgba(255,255,255,0.72);
+  box-shadow: 0 24px 70px rgba(0,0,0,0.18);
+  backdrop-filter: blur(10px);
 
+  /* 🔥 CLAVE: limitar altura y hacer layout en columna */
   max-height: calc(100dvh - 32px);
   display: flex;
   flex-direction: column;
+
+  /* ya NO conviene cortar todo, el scroll va dentro */
   overflow: hidden;
 }
 
@@ -273,21 +278,11 @@ function guardar() {
   align-items:center;
   justify-content:space-between;
   padding: 14px 16px;
-  border-bottom: 1px solid var(--suave-2);
-}
-
-.cabecera h3{ margin: 0; font-size: 16px; letter-spacing: 0.2px; color: var(--texto); }
-
-.cerrar{
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-  font-size: 16px;
-  opacity: 0.8;
-  color: var(--texto);
+  border-bottom: 1px solid rgba(31,42,36,0.10);
 }
 
 .contenido{
+  /* 🔥 CLAVE: aquí vive el scroll */
   flex: 1 1 auto;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -296,6 +291,52 @@ function guardar() {
   padding: 14px 16px 16px;
   display:grid;
   gap: 12px;
+}
+
+/*.acciones{
+  position: sticky;
+  bottom: 0;
+
+  display:flex;
+  justify-content:flex-end;
+  gap: 10px;
+
+  margin: 0 -16px -16px;
+  padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
+
+  border-top: 1px solid rgba(31,42,36,0.10);
+
+  background: linear-gradient(
+    to top,
+    rgba(255,255,255,0.82) 0%,
+    rgba(255,255,255,0.72) 60%,
+    rgba(255,255,255,0) 100%
+  );
+  backdrop-filter: blur(10px);
+}*/
+.acciones{
+  display:flex;
+  justify-content:flex-end;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+@media (max-width: 640px){
+  .modal{
+    width: 100%;
+    border-radius: 18px;
+    max-height: calc(100dvh - 24px);
+  }
+  .fila{ grid-template-columns: 1fr; }
+}
+
+.cabecera h3{ margin: 0; font-size: 16px; letter-spacing: 0.2px; }
+.cerrar{
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-size: 16px;
+  opacity: 0.75;
 }
 
 .fila{
@@ -310,24 +351,17 @@ function guardar() {
   font-size: 13px;
 }
 
-.campo span{ opacity: 0.8; }
-
+.campo span{ opacity: 0.78; }
 input, select, textarea{
   border-radius: 14px;
-  border: 1px solid var(--input-border);
-  background: var(--input);
-  color: var(--texto);
+  border: 1px solid rgba(31,42,36,0.12);
+  background: rgba(255,255,255,0.70);
   padding: 10px 12px;
   outline: none;
 }
 
-input::placeholder, textarea::placeholder{
-  color: rgba(234, 240, 255, 0.55);
-}
-
 input:focus, select:focus, textarea:focus{
-  border-color: rgba(0, 255, 240, 0.45);
-  box-shadow: 0 0 0 3px rgba(0, 255, 240, 0.14);
+  border-color: rgba(31,42,36,0.20);
 }
 
 .chips{
@@ -341,51 +375,23 @@ input:focus, select:focus, textarea:focus{
   font-size: 12px;
   padding: 6px 10px;
   border-radius: 999px;
-  border: 1px solid var(--tarjeta-borde);
-  background: var(--chip);
-  color: var(--texto);
-  opacity: 0.9;
-}
-
-.acciones{
-  display:flex;
-  justify-content:flex-end;
-  gap: 10px;
-  margin-top: 6px;
+  border: 1px solid rgba(31,42,36,0.12);
+  background: rgba(255,255,255,0.55);
 }
 
 .btnPri, .btnSec{
   border-radius: 999px;
   padding: 10px 14px;
-  border: 1px solid var(--tarjeta-borde);
+  border: 1px solid rgba(31,42,36,0.12);
   cursor: pointer;
 }
 
 .btnPri{
-  background: var(--btn);
-  color: var(--btn-texto);
-  box-shadow: 0 0 18px rgba(0, 255, 240, 0.10);
-}
-
-.btnPri:hover{
-  box-shadow: 0 0 0 3px rgba(255, 0, 255, 0.12), 0 0 0 1px rgba(0, 255, 240, 0.20), 0 0 22px rgba(0, 255, 240, 0.12);
+  background: rgba(31,42,36,0.92);
+  color: #fff;
 }
 
 .btnSec{
-  background: var(--chip);
-  color: var(--texto);
-}
-
-.btnSec:hover{
-  border-color: rgba(0, 255, 240, 0.35);
-}
-
-@media (max-width: 640px){
-  .modal{
-    width: 100%;
-    border-radius: 18px;
-    max-height: calc(100dvh - 24px);
-  }
-  .fila{ grid-template-columns: 1fr; }
+  background: rgba(255,255,255,0.65);
 }
 </style>
