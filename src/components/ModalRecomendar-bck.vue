@@ -95,124 +95,67 @@ function enviar() {
 .fondo{
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.62);
-  backdrop-filter: blur(2px);
+  background: rgba(20, 24, 22, 0.30);
   display:flex;
   align-items:center;
   justify-content:center;
-  padding: 16px;
+  padding: 20px;
   z-index: 60;
-  overflow: auto;
 }
 
 .modal{
-  width: min(720px, 100%);
+  width: min(560px, 100%);
   border-radius: 22px;
-  border: 1px solid var(--tarjeta-borde);
-  background: var(--tarjeta);
-  box-shadow: var(--sombra), var(--glow);
-  backdrop-filter: blur(14px);
+  border: 1px solid rgba(31,42,36,0.12);
+  background: rgba(255,255,255,0.72);
+  box-shadow: 0 24px 70px rgba(0,0,0,0.18);
+  backdrop-filter: blur(10px);
   overflow: hidden;
-
-  max-height: calc(100dvh - 32px);
-  display:flex;
-  flex-direction: column;
 }
 
 .cabecera{
-  flex: 0 0 auto;
   display:flex;
   align-items:center;
   justify-content:space-between;
   padding: 14px 16px;
-  border-bottom: 1px solid var(--suave);
+  border-bottom: 1px solid rgba(31,42,36,0.10);
 }
 
 .cabecera h3{ margin: 0; font-size: 16px; letter-spacing: 0.2px; }
+.cerrar{ border: 0; background: transparent; cursor: pointer; font-size: 16px; opacity: 0.75; }
 
-.cerrar{
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-  font-size: 18px;
-  opacity: 0.8;
-  color: var(--texto);
-}
-.cerrar:hover{ opacity: 1; }
+.contenido{ padding: 14px 16px 16px; display:grid; gap: 12px; }
 
-.contenido{
-  flex: 1 1 auto;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
+.linea{ display:flex; justify-content:space-between; gap: 10px; }
+.label{ opacity: 0.70; font-size: 13px; }
+.valor{ font-size: 13.5px; }
+.strong{ font-weight: 700; }
 
-  padding: 14px 16px 16px;
-  display:grid;
-  gap: 12px;
-}
+.campo{ display:grid; gap: 6px; font-size: 13px; }
+.campo span{ opacity: 0.78; }
 
-.fila{
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.campo{
-  display:grid;
-  gap: 6px;
-  font-size: 13px;
-}
-.campo span{ opacity: 0.82; }
-
-.valor{
-  font-weight: 800;
-  letter-spacing: 0.2px;
-}
-
-/* ✅ Inputs visibles en modo oscuro */
-input, select, textarea{
+textarea{
   border-radius: 14px;
-  border: 1px solid rgba(255,255,255,0.14);
-  background: rgba(255,255,255,0.06);
-  color: var(--texto);
+  border: 1px solid rgba(31,42,36,0.12);
+  background: rgba(255,255,255,0.70);
   padding: 10px 12px;
   outline: none;
-}
-input::placeholder, textarea::placeholder{ color: rgba(235,245,255,0.55); }
-
-input:focus, select:focus, textarea:focus{
-  border-color: rgba(0,229,255,0.55);
-  box-shadow: 0 0 0 3px rgba(0,229,255,0.12);
 }
 
 .acciones{
   display:flex;
   justify-content:flex-end;
   gap: 10px;
-  margin-top: 6px;
+  margin-top: 4px;
 }
 
 .btnPri, .btnSec{
   border-radius: 999px;
   padding: 10px 14px;
-  border: 1px solid rgba(255,255,255,0.14);
+  border: 1px solid rgba(31,42,36,0.12);
   cursor: pointer;
 }
 
-.btnPri{
-  background: var(--btn);
-  border-color: var(--btn-borde);
-  color: var(--btn-texto);
-  box-shadow: var(--glow);
-}
-
-.btnSec{
-  background: rgba(255,255,255,0.06);
-  color: var(--texto);
-}
-
-@media (max-width: 640px){
-  .fila{ grid-template-columns: 1fr; }
-  .modal{ border-radius: 18px; max-height: calc(100dvh - 24px); }
-}
+.btnPri{ background: rgba(31,42,36,0.92); color: #fff; }
+.btnSec{ background: rgba(255,255,255,0.65); }
 </style>

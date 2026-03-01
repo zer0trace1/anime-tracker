@@ -96,173 +96,69 @@ function rechazar(r: Recomendacion) {
 .fondo{
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.62);
-  backdrop-filter: blur(2px);
+  background: rgba(20, 24, 22, 0.30);
   display:flex;
   align-items:center;
   justify-content:center;
-  padding: 16px;
+  padding: 20px;
   z-index: 60;
-  overflow:auto;
 }
 
 .modal{
-  width: min(780px, 100%);
+  width: min(720px, 100%);
   border-radius: 22px;
-  border: 1px solid var(--tarjeta-borde);
-  background: var(--tarjeta);
-  box-shadow: var(--sombra), var(--glow);
-  backdrop-filter: blur(14px);
+  border: 1px solid rgba(31,42,36,0.12);
+  background: rgba(255,255,255,0.72);
+  box-shadow: 0 24px 70px rgba(0,0,0,0.18);
+  backdrop-filter: blur(10px);
   overflow: hidden;
-
-  max-height: calc(100dvh - 32px);
-  display:flex;
-  flex-direction: column;
 }
 
 .cabecera{
-  flex: 0 0 auto;
   display:flex;
   align-items:center;
   justify-content:space-between;
   padding: 14px 16px;
-  border-bottom: 1px solid var(--suave);
+  border-bottom: 1px solid rgba(31,42,36,0.10);
 }
 
 .cabecera h3{ margin: 0; font-size: 16px; letter-spacing: 0.2px; }
+.cerrar{ border: 0; background: transparent; cursor: pointer; font-size: 16px; opacity: 0.75; }
 
-.cerrar{
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-  font-size: 18px;
-  opacity: 0.8;
-  color: var(--texto);
-}
-.cerrar:hover{ opacity: 1; }
+.contenido{ padding: 14px 16px 16px; }
 
-.contenido{
-  flex: 1 1 auto;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
+.vacio{ text-align:center; padding: 18px 6px; opacity: .75; }
 
-  padding: 14px 16px 16px;
-  display:grid;
-  gap: 12px;
-}
-
-.vacio{
-  text-align:center;
-  opacity: 0.85;
-  padding: 18px 0;
-}
+.lista{ display:grid; gap: 10px; }
 
 .item{
   border-radius: 18px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(255,255,255,0.06);
-  padding: 12px 12px;
-  display:flex;
-  gap: 12px;
-  align-items:flex-start;
+  border: 1px solid rgba(31,42,36,0.10);
+  background: rgba(255,255,255,0.55);
+  box-shadow: 0 14px 34px rgba(0,0,0,0.06);
+  padding: 12px;
 }
 
-.portada{
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
-  border: 1px solid rgba(255,255,255,0.10);
-  background: rgba(255,255,255,0.06);
-  overflow:hidden;
-  flex: 0 0 auto;
-  display:grid;
-  place-items:center;
-}
-.portada img{ width: 100%; height: 100%; object-fit: cover; }
-.portadaVacia{ font-weight: 800; opacity: 0.85; }
+.top{ display:flex; justify-content:space-between; gap: 10px; align-items:baseline; }
+.titulo{ font-weight: 750; letter-spacing: .2px; }
+.de{ opacity: .72; font-size: 13px; }
 
-.info{ flex: 1; min-width: 0; }
-
-.titulo{
-  font-weight: 800;
-  letter-spacing: 0.2px;
-}
-
-.sub{
-  margin-top: 2px;
-  font-size: 12.5px;
-  opacity: 0.78;
-}
-
-.mensaje{
-  margin-top: 8px;
-  font-size: 13px;
-  opacity: 0.88;
-  line-height: 1.35;
-}
-
-.meta{
-  margin-top: 6px;
-  font-size: 12px;
-  opacity: 0.70;
-  display:flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  align-items:center;
-}
-
-.pill{
-  display:inline-flex;
-  align-items:center;
-  border-radius: 999px;
-  padding: 4px 10px;
-  border: 1px solid rgba(255,255,255,0.14);
-  background: rgba(255,255,255,0.06);
-}
+.mensaje{ margin-top: 6px; opacity: .80; font-size: 13px; }
 
 .acciones{
   display:flex;
   gap: 10px;
-  align-items:center;
   justify-content:flex-end;
-  margin-left: auto;
-  flex: 0 0 auto;
+  margin-top: 10px;
 }
 
 .btnPri, .btnSec{
   border-radius: 999px;
   padding: 10px 14px;
-  border: 1px solid rgba(255,255,255,0.14);
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.btnPri{
-  background: var(--btn);
-  border-color: var(--btn-borde);
-  color: var(--btn-texto);
-  box-shadow: var(--glow);
-}
-
-.btnSec{
-  background: rgba(255,255,255,0.06);
-  color: var(--texto);
-}
-
-.btnDanger{
-  border-radius: 999px;
-  padding: 10px 14px;
-  border: 1px solid rgba(255,107,107,0.28);
-  background: rgba(255,107,107,0.10);
-  color: rgba(255,230,230,0.92);
+  border: 1px solid rgba(31,42,36,0.12);
   cursor: pointer;
 }
-.btnDanger:hover{ border-color: rgba(255,107,107,0.45); }
 
-@media (max-width: 640px){
-  .modal{ border-radius: 18px; max-height: calc(100dvh - 24px); }
-  .item{ flex-direction: column; }
-  .acciones{ width: 100%; justify-content:flex-end; }
-}
+.btnPri{ background: rgba(31,42,36,0.92); color: #fff; }
+.btnSec{ background: rgba(255,255,255,0.65); }
 </style>

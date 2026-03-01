@@ -414,10 +414,11 @@ function eliminar(item: Estreno) {
 
 .inputCtrl{
   border-radius: 14px;
-  border: 1px solid var(--tarjeta-borde);
-  background: var(--input);
+  border: 1px solid rgba(0,245,255,0.16);
+  background: rgba(10, 12, 24, 0.55);
   padding: 10px 12px;
   outline: none;
+  color: var(--texto);
 }
 
 .inputCtrl:focus{ border-color: rgba(0, 255, 240, 0.35); }
