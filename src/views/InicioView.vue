@@ -592,7 +592,7 @@ function estiloPortada(item: Seguimiento) {
 
 <style scoped>
 .contenedor{
-  max-width: 980px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 22px 18px 110px;
 }
