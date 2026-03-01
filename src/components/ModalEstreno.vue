@@ -162,7 +162,11 @@ function guardar() {
 .fondo{
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.62);
+  /*background: rgba(0,0,0,0.62);*/
+  background:
+  radial-gradient(900px 520px at 82% 20%, rgba(0, 255, 240, 0.10), transparent 60%),
+  radial-gradient(900px 700px at 60% 95%, rgba(255, 0, 255, 0.08), transparent 55%),
+  rgba(0,0,0,0.55);
   backdrop-filter: blur(2px);
   display:flex;
   align-items:center;
